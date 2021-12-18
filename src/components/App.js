@@ -13,15 +13,16 @@ import jwtDecode from "jwt-decode";
 
 function App() {
   const [user, setUser] = useState('');
+  const [toggle, setToggle] = useState(false);
 
   useEffect(() => {
     login(); 
-  }, [])
+  }, [toggle])
 
   const login = async () => {
-    const jwt = localStorage.getItem('token')
-    const dced_user = jwtDecode(jwt)
     try {
+      const jwt = localStorage.getItem('token')
+      const dced_user = jwtDecode(jwt)
       var results = await axios({
         method: 'GET',
         url: 'http://127.0.0.1:8000/api/auth/' + dced_user.user_id + '/',
@@ -37,6 +38,10 @@ function App() {
   const logout = () => {
     localStorage.clear();
     window.location.href = "/";
+  }
+
+  const reloadToggle = () => {
+    setToggle(!toggle)     
   }
 
   return (
