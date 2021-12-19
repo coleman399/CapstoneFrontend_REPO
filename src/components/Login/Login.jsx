@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Button, Container, Stack, Col, Row, Figure, Image } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Form, Button, Container, Stack, Col, Row, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import './Login.css';
 
 const Login = (props) => {
@@ -47,7 +48,12 @@ const Login = (props) => {
                 <Row className="justify-content">
                     <Col>
                         <div className="p-5 position-absolute top-50 start-50 translate-middle border rounded bg-white">
-                            <h4 className="text-center">Sign In</h4>
+                            <div className="text-center">
+                                <Image src={ShopLogo} alt="ShopLogo" roundedCircle/>
+                                <br/>
+                                <br/>
+                                <h4>Sign In</h4>
+                            </div>
                             <br/>
                             <Form className="Login" onSubmit={handleSubmit}>
                                 <Form.Group controlId="username">
@@ -56,7 +62,7 @@ const Login = (props) => {
                                 </Form.Group>   
                                 <Form.Group controlId="password">
                                 <Form.Label>Password</Form.Label>
-                                    <Form.Control onChange={e => setUserPassword(e.target.value)} placeholder="" type="text" required />
+                                    <Form.Control onChange={e => setUserPassword(e.target.value)} placeholder="" type="password" required />
                                 </Form.Group>
                                 <br/>
                                 <Stack direction="horizontal" gap={5}>

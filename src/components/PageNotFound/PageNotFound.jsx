@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Container, Figure, Image , Button, Stack } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import ErrorPage from "../assets/404ErrorPage.png";

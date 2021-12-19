@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Stack, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// import './Register.css';
+import './Register.css';
 
 const Register = (props) => {
     const [firstname, setFirstName] = useState()
