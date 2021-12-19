@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Login from './Login/Login';
 import Register from './Register/Register';
 import AdminPage from './AdminPage/AdminPage';
+import PageNotFound from './PageNotFound/PageNotFound';
 import CustomerPage from './CustomerPage/CustomerPage';
 import axios from "axios"
 import {
@@ -48,21 +49,22 @@ function App() {
     <Router>
       <Routes>
         <Route exact path="/" element={
-          ((!user) ?
-            <Login />
-          :
+          ((!user)? 
+            <Login /> 
+            : 
             ((!user.is_staff) ?
               <CustomerPage /> 
-            :
+              :
               <AdminPage />
             ) 
           )
-        }
-        />
+        }/>
         <Route path="/register" element={
-            <Register />
-          } 
-        />
+          <Register />
+        }/>
+        <Route path="*" element={
+          <PageNotFound />
+        }/>
       </Routes>
     </Router>
   );    

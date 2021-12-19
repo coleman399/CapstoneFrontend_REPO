@@ -1,0 +1,14 @@
+.goHomeButton {
+    position: absolute;
+    text-align: center;
+    top: 75%;
+    left: 60%;
+}
+
+.pageNotFoundHeader {
+    position: relative;
+    text-align: center;
+    font-family: Georgia, Verdana, sans-serif;
+    font-size: 25px;
+    margin-bottom: 0;
+}

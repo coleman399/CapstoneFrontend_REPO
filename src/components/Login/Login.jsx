@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button } from 'react-bootstrap';
-import axios from 'axios';
+import { Form, Button, Container, Stack, Col, Row, Figure, Image } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './Login.css';
 
 const Login = (props) => {
     const [userName, setUserName] = useState('')
     const [userPassword, setUserPassword] = useState('')
-    const [toggle, setToggle] = useState(false)
     const navigate = useNavigate()
-
-
-    useEffect(() => {
-
-    },[toggle])
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -33,37 +28,47 @@ const Login = (props) => {
         } catch (e) {
         if (e.response.status === 401) {
             alert("Unauthorized access. Please try again.")
-            setUserName('');
-            setUserPassword('');
-            setToggle(!toggle);
+            document.forms[0].reset();
 
         } else {
             console.log(e)
             alert("Oops... Something went wrong. 😥")
-            setUserName('');
-            setUserPassword('');
-            setToggle(!toggle);
+            document.forms[0].reset();
         }}
     }
-     
+    
     function handleOnClick(){
         navigate("/register")
     }
 
     return ( 
-        <div>
-            <Form className="Login" onSubmit={handleSubmit}>
-                <Form.Group controlId="username">
-                  <Form.Label>User Name</Form.Label>
-                    <Form.Control onChange={e => setUserName(e.target.value)} type="text" required />
-                </Form.Group>   
-                <Form.Group controlId="password">
-                  <Form.Label>Password</Form.Label>
-                    <Form.Control onChange={e => setUserPassword(e.target.value)} type="text" required />
-                </Form.Group>
-                <Button type="submit">Submit</Button>
-            </Form>
-            <Button onClick={()=>handleOnClick()}>Register</Button>
+        <div className="bg">
+            <Container>
+                <Row className="justify-content">
+                    <Col>
+                        <div className="p-5 position-absolute top-50 start-50 translate-middle border rounded bg-white">
+                            <h4 className="text-center">Sign In</h4>
+                            <br/>
+                            <Form className="Login" onSubmit={handleSubmit}>
+                                <Form.Group controlId="username">
+                                <Form.Label>User Name</Form.Label>
+                                    <Form.Control onChange={e => setUserName(e.target.value)} placeholder="" type="text" required />
+                                </Form.Group>   
+                                <Form.Group controlId="password">
+                                <Form.Label>Password</Form.Label>
+                                    <Form.Control onChange={e => setUserPassword(e.target.value)} placeholder="" type="text" required />
+                                </Form.Group>
+                                <br/>
+                                <Stack direction="horizontal" gap={5}>
+                                    <Button onClick={()=>handleOnClick()}>Register</Button>
+                                    <div className="vr" />
+                                    <Button type="submit">Submit</Button>
+                                </Stack>
+                            </Form>
+                        </div>
+                    </Col>
+                </Row>
+            </Container>
         </div>
      );
 }

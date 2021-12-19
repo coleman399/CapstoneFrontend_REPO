@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, Button, Container, Stack, Col, Row } from 'react-bootstrap';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Register.css';
+// import './Register.css';
 
 const Register = (props) => {
     const [firstname, setFirstName] = useState()
@@ -35,7 +34,8 @@ const Register = (props) => {
                     is_staff: false,
                 },
             });
-            console.log(tempUser);           
+            console.log(tempUser);
+            alert("🎉 Account Created! 🎉")           
             setUserName("");
             setPassword("");
             setEmail("");
@@ -43,8 +43,15 @@ const Register = (props) => {
             setLastName("");
             navigate("/")
         } catch (e) {
-          console.log(e)
-        }
+        if (e.response.status === 401) {
+            alert("Unauthorized access. Please try again.")
+            document.forms[0].reset();
+
+        } else {
+            console.log(e)
+            alert("Oops... Something went wrong. 😥")
+            document.forms[0].reset();
+        }}
     }
 
     function handleOnClick() {
@@ -80,11 +87,11 @@ const Register = (props) => {
                       <Form.Label>Last Name</Form.Label>
                         <Form.Control onChange={e => setLastName(e.target.value)} type="text" required />
                     </Form.Group>
-                    <br />
+                    <br/>
                     <Stack direction="horizontal" gap={5}>
-                      <Button type="submit">Submit</Button>
-                      <div className="vr" />
                       <Button onClick={handleOnClick}>Sign In</Button>
+                      <div className="vr" />
+                      <Button type="submit">Submit</Button>
                     </Stack>
                 </Form>
               </div>
