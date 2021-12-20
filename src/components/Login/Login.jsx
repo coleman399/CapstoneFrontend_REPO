@@ -43,7 +43,7 @@ const Login = (props) => {
     }
 
     return ( 
-        <div className="bg">
+        <div className="login-background">
             <Container>
                 <Row className="justify-content">
                     <Col>

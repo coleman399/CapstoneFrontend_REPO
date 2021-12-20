@@ -53,7 +53,7 @@ function App() {
             <Login /> 
             : 
             ((!user.is_staff) ?
-              <CustomerPage /> 
+              <CustomerPage user={user}/> 
               :
               <AdminPage />
             ) 

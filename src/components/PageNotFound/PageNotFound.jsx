@@ -14,7 +14,7 @@ const PageNotFound = (props) => {
     }
 
     return (
-        <div>
+        <div className="container-fluid">
             <div className="text-center alert alert-primary" role="alert">
                😮 Oh no, you're lost! Let's get you home. 🚀
             </div>

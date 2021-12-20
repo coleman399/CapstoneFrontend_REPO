@@ -1,0 +1,91 @@
+html {
+    margin: 0;
+    padding: 0;
+    max-height:100vh;
+}
+
+body {
+  background: rgba(1, 1, 1, 0);
+  height: 100%;
+}
+
+.container-fluid {
+    padding:0;
+    margin: 0;
+    width: 100%;
+}
+
+.navbar-logo-nav {
+    background-color: #EDE9D0;
+}
+
+.nav-logo {
+    display: flex;
+    position: static;
+    flex-shrink: 0;
+    padding: 1px 8px 0 6px;
+    margin: 1px;
+    left: auto;
+}
+
+.company-name {
+    position: relative;
+    text-align: center;
+    font-family: 'Lobster Two', cursive;
+    font-size: 45px;
+    margin-bottom: 0;
+}
+
+.company-description {
+    position: relative;
+    text-align: center;
+    font-family: Georgia, Verdana, sans-serif;
+    font-size: 18px;
+    margin-bottom: 0;
+}
+
+.carousel-header-one {
+    font-family: Georgia, Verdana, sans-serif;
+    position: relative;
+    color: #EDE9D0;
+}
+
+.carousel-header-two {
+    font-family: Georgia, Verdana, sans-serif;
+    position: relative;
+    color: #EDE9D0;
+
+}
+
+.carousel-header-three {
+    font-family: Georgia, Verdana, sans-serif;
+    position: relative;
+    color: #EDE9D0;
+}
+
+.border {
+    background-color: #3A001E;
+}
+
+.customer-background {
+    background-color: #3A001E;
+    padding: 0;
+}
+
+.shop-container {
+    background-color: #EDE9D0;
+}
+
+.shop-container-content {
+    background-color: white;
+}
+
+.navbar-shop-nav {
+    background-color: #0F1111;
+}
+
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
