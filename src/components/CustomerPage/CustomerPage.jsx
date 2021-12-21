@@ -13,15 +13,18 @@ const CustomerPage = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [products, setProducts] = useState([]);
     const [shoppingCart, setShoppingCart] = useState([]);
-    const [shoppingCartQuantity, setShoppingCartQuantity] = useState(0);
     const [toggle, setToggle] = useState(false);
+    const [counter, setCounter] = useState(0);
+    const [productIds, setProductIds] = useState([]);
+    const [decodedToken, setDecodedToken] = useState();
 
     useEffect(() => {
-        getShoppingCart();
+        getToken();    
         getProducts();
+        getShoppingCart();   
     },[toggle])
 
-    //add try and catch
+    //add try-catch
     const getProducts = async () => {
         var results = await axios ({
             method: 'GET',
@@ -31,65 +34,89 @@ const CustomerPage = (props) => {
         setProducts(results.data)
     }
 
-    //add try and catch
+    //add try-catch
     const getShoppingCart = async () => {
-        const jwt = localStorage.getItem('token')
-        const dced_user = jwtDecode(jwt)
-        var results = await axios ({
+        await axios ({
             method: 'GET',
             url: 'http://127.0.01:8000/api/shoppingcarts/'
+        }).then((response) =>{
+            console.log(response.data)
+            setShoppingCart(response.data);
+            getShoppingCartCount();
+            getProductIds();
         })
-        console.log(results.data)
-        setShoppingCart(results.data)
-        let counter = 0; 
-        results.data.filter((sc) => {
-            if (sc.user === dced_user.user_id) {
-                counter = sc.quantity + counter;
-            }
-        })
-        console.log(counter);
-        setShoppingCartQuantity(counter)         
     }
 
-
-    //Shopping Cart needs some work!
-    const addToShoppingCart = async (product) => {
+    const getToken = () => {
         const jwt = localStorage.getItem('token')
         const dced_user = jwtDecode(jwt)
-        if (shoppingCart === []) {
-            var results = await axios ({
+        setDecodedToken(dced_user)
+    }
+
+    const getShoppingCartCount = () => {
+        let tempCounter = 0;
+        shoppingCart.filter((sc) => { 
+            if (sc.user === decodedToken.user_id) {
+                tempCounter = tempCounter + sc.quantity
+            }
+        })
+        setCounter(tempCounter)
+        console.log(counter)
+        renderToggle();   
+    }
+    
+    const renderToggle = () => {
+        setToggle(!toggle);
+    }
+
+    const getProductIds = () => {
+        let array = [];
+        shoppingCart.filter((sc) => {
+            if (sc.user === decodedToken.user_id) {
+                let newProductIds = array.concat(sc.product)
+                array = newProductIds
+            }
+        })
+        setProductIds(array);
+        console.log(productIds);
+        renderToggle();
+    }
+
+    //add try-catch 
+    const addToShoppingCart = async (product) => {
+        if (productIds.includes(product.id)) {
+            shoppingCart.filter( async (sc) => {
+                if (sc.product === product.id) { 
+                    await axios ({
+                        method: 'PUT',
+                        url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
+                        data: {
+                            user: `${sc.user}`,
+                            product: `${sc.product}`,
+                            quantity: sc.quantity + 1,
+                        }
+                    }).then((response) => {
+                        console.log(response.data);
+                        renderToggle();               
+                    })
+                }
+            })
+        } else {
+            await axios ({
                 method: 'POST',
                 url: 'http://127.0.01:8000/api/shoppingcarts/',
                 data: {
-                    user: `${dced_user.user_id}`,
+                    user: `${decodedToken.user_id}`,
                     product: `${product.id}`,
                     quantity: 1,
                 }
-            })
-            console.log(results.data);
-            setToggle(!toggle);
-        } else {
-            shoppingCart.filter( async (sc) => {
-                if (sc.user === dced_user.user_id) {
-                    if (sc.product === product.id) {
-                        var results = await axios ({
-                            method: 'PUT',
-                            url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
-                            data: {
-                                user: `${dced_user.user_id}`,
-                                product: `${product.id}`,
-                                quantity: sc.quantity + 1,
-                            }
-                        })
-                    } else {
-
-                    }
-                } else {
-
-                }
-            })
-        } 
-    }
+            }).then((response) => {
+                console.log(response.data);
+                renderToggle();
+            }) 
+        }
+    } 
+    
 
     return (
         <div className="customer-background">
@@ -167,7 +194,7 @@ const CustomerPage = (props) => {
                                 <button type="button" className="btn btn-primary position-relative">
                                     Shopping Cart 🛒
                                     <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {shoppingCartQuantity}
+                                        {counter}
                                         <span className="visually-hidden">unread messages</span>
                                     </span>
                                 </button>
