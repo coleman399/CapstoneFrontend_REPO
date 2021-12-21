@@ -78,6 +78,11 @@ body {
 
 .shop-container-content {
     background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
 }
 
 .navbar-shop-nav {
@@ -88,4 +93,24 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.info-buy-buttons {
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.search-button {
+    background-color: #3A001E;
+}
+
+.shopping-cart-button {
+    text-align: right;
 }

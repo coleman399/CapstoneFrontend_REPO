@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Navbar, Image, Stack, Carousel, Card, Button, ListGroup } from 'react-bootstrap';
+import { Spinner, Container, Row, Col, Navbar, Image, Stack, Carousel, Card, Button, ListGroup, Form, InputGroup, FormControl } from 'react-bootstrap';
 import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import EmployeeOne from '../assets/Employee1_Preview.png';
 import EmployeeTwo from '../assets/Employee2_Preview.png';
 import EmployeeThree from '../assets/Employee3_Preview.png';
 import ProductImage from '../assets/100x100.png';
 import axios from 'axios';
+import jwtDecode from "jwt-decode";
 import './CustomerPage.css';
 
-
-
 const CustomerPage = (props) => {
-    const [products, setProducts] = useState('');
-    
-    useEffect(() =>{
-        getProducts();
-    },[])
+    const [searchTerm, setSearchTerm] = useState('');
+    const [products, setProducts] = useState([]);
+    const [shoppingCart, setShoppingCart] = useState([]);
+    const [shoppingCartQuantity, setShoppingCartQuantity] = useState(0);
+    const [toggle, setToggle] = useState(false);
 
+    useEffect(() => {
+        getShoppingCart();
+        getProducts();
+    },[toggle])
+
+    //add try and catch
     const getProducts = async () => {
         var results = await axios ({
             method: 'GET',
@@ -26,6 +31,65 @@ const CustomerPage = (props) => {
         setProducts(results.data)
     }
 
+    //add try and catch
+    const getShoppingCart = async () => {
+        const jwt = localStorage.getItem('token')
+        const dced_user = jwtDecode(jwt)
+        var results = await axios ({
+            method: 'GET',
+            url: 'http://127.0.01:8000/api/shoppingcarts/'
+        })
+        console.log(results.data)
+        setShoppingCart(results.data)
+        let counter = 0; 
+        results.data.filter((sc) => {
+            if (sc.user === dced_user.user_id) {
+                counter = sc.quantity + counter;
+            }
+        })
+        console.log(counter);
+        setShoppingCartQuantity(counter)         
+    }
+
+
+    //Shopping Cart needs some work!
+    const addToShoppingCart = async (product) => {
+        const jwt = localStorage.getItem('token')
+        const dced_user = jwtDecode(jwt)
+        if (shoppingCart === []) {
+            var results = await axios ({
+                method: 'POST',
+                url: 'http://127.0.01:8000/api/shoppingcarts/',
+                data: {
+                    user: `${dced_user.user_id}`,
+                    product: `${product.id}`,
+                    quantity: 1,
+                }
+            })
+            console.log(results.data);
+            setToggle(!toggle);
+        } else {
+            shoppingCart.filter( async (sc) => {
+                if (sc.user === dced_user.user_id) {
+                    if (sc.product === product.id) {
+                        var results = await axios ({
+                            method: 'PUT',
+                            url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
+                            data: {
+                                user: `${dced_user.user_id}`,
+                                product: `${product.id}`,
+                                quantity: sc.quantity + 1,
+                            }
+                        })
+                    } else {
+
+                    }
+                } else {
+
+                }
+            })
+        } 
+    }
 
     return (
         <div className="customer-background">
@@ -85,27 +149,61 @@ const CustomerPage = (props) => {
                 <br/>
                 <div className="border rounded">
                 <Navbar className="navbar-shop-nav border rounded">
-                    <Container fluid>
-                        <br/>
+                    <Container>
+                        <div className="col align-self-start">
+                              <InputGroup>
+                                <FormControl
+                                    placeholder="Search"
+                                    aria-label="Search"
+                                    aria-describedby="basic-addon2"
+                                    type="text"
+                                    onChange={event => {setSearchTerm(event.target.value)}}
+                                />
+                            </InputGroup>
+                        </div>
+                        <div className="col"/>
+                        <div className="col">
+                            <div className="shopping-cart-button">
+                                <button type="button" className="btn btn-primary position-relative">
+                                    Shopping Cart 🛒
+                                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                        {shoppingCartQuantity}
+                                        <span className="visually-hidden">unread messages</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
                     </Container>
                 </Navbar>
                 <Container className="shop-container-content" fluid>
                     <br/>
                     <div className="product-list">
                         {products.length > 0 ?
-                            products.map((val, key)=> {
+                            products.filter((product) => {
+                                if (searchTerm === '') {
+                                    return product;
+                                } else if (product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+                                    return product;
+                                }
+                            }).map((product, key) => {
                                 return (
-                                    <div>
+                                    <div className="product-card" key={key}>
                                         <br/>
                                         <Card style={{ width: '18rem' }}>
                                             <Card.Img variant="top" src={ProductImage} />
                                             <Card.Body>
-                                                <Card.Title>{val.name}</Card.Title>
+                                                <Card.Title>{product.name}</Card.Title>
                                                 <Card.Text>
                                                 Some quick example text to build on the card title and make up the bulk of
                                                 the card's content.
                                                 </Card.Text>
-                                                <Button variant="primary">Go somewhere</Button>
+                                                <div className="info-buy-buttons">
+                                                    <Stack direction="horizontal" gap={5}>
+                                                        <Button> ℹ️ </Button>
+                                                        <div className="vr" />
+                                                        <Button onClick={()=>addToShoppingCart(product)} type="submit"> 🛒 </Button>
+                                                    </Stack>
+                                                </div>
                                             </Card.Body>
                                         </Card>
                                         <br/> 
@@ -113,7 +211,9 @@ const CustomerPage = (props) => {
                                 )
                             })
                         :
-                            "No Products"
+                            <Spinner animation="border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                            </Spinner>
                         }
                     </div>
                     <br/>
