@@ -1,103 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { Spinner, Container, Row, Col, Navbar, Image, Stack, Carousel, Card, Button, ListGroup, Form, InputGroup, FormControl } from 'react-bootstrap';
+import { Spinner, Container, Offcanvas, Row, Col, Navbar, Image, Stack, Carousel, Card, Button, ListGroup, Form, InputGroup, FormControl } from 'react-bootstrap';
 import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import EmployeeOne from '../assets/Employee1_Preview.png';
 import EmployeeTwo from '../assets/Employee2_Preview.png';
 import EmployeeThree from '../assets/Employee3_Preview.png';
 import ProductImage from '../assets/100x100.png';
 import axios from 'axios';
-import jwtDecode from "jwt-decode";
 import './CustomerPage.css';
+import jwtDecode from "jwt-decode";
 
 const CustomerPage = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [products, setProducts] = useState([]);
-    const [shoppingCart, setShoppingCart] = useState([]);
-    const [toggle, setToggle] = useState(false);
-    const [counter, setCounter] = useState(0);
-    const [productIds, setProductIds] = useState([]);
-    const [decodedToken, setDecodedToken] = useState();
+    const [show, setShow] = useState(false);
 
-    useEffect(() => {
-        getToken();    
-        getProducts();
-        getShoppingCart();   
-    },[toggle])
+    useEffect(() => { 
+    },[]);
 
-    //add try-catch
-    const getProducts = async () => {
-        var results = await axios ({
-            method: 'GET',
-            url: 'http://127.0.01:8000/api/products/'
-        })
-        console.log(results.data);
-        setProducts(results.data)
+    const handleShow = () => {
+        setShow(true);
     }
 
-    //add try-catch
-    const getShoppingCart = async () => {
-        await axios ({
-            method: 'GET',
-            url: 'http://127.0.01:8000/api/shoppingcarts/'
-        }).then((response) =>{
-            console.log(response.data)
-            setShoppingCart(response.data);
-            getShoppingCartCount();
-            getProductIds();
-        })
-    }
-
-    const getToken = () => {
-        const jwt = localStorage.getItem('token')
-        const dced_user = jwtDecode(jwt)
-        setDecodedToken(dced_user)
-    }
-
-    const getShoppingCartCount = () => {
-        let tempCounter = 0;
-        shoppingCart.filter((sc) => { 
-            if (sc.user === decodedToken.user_id) {
-                tempCounter = tempCounter + sc.quantity
-            }
-        })
-        setCounter(tempCounter)
-        console.log(counter)
-        renderToggle();   
-    }
-    
-    const renderToggle = () => {
-        setToggle(!toggle);
-    }
-
-    const getProductIds = () => {
-        let array = [];
-        shoppingCart.filter((sc) => {
-            if (sc.user === decodedToken.user_id) {
-                let newProductIds = array.concat(sc.product)
-                array = newProductIds
-            }
-        })
-        setProductIds(array);
-        console.log(productIds);
-        renderToggle();
+    const handleHide = () => {
+        setShow(false);
     }
 
     //add try-catch 
     const addToShoppingCart = async (product) => {
-        if (productIds.includes(product.id)) {
-            shoppingCart.filter( async (sc) => {
+        const jwt = localStorage.getItem('token');
+        const dced_user = jwtDecode(jwt);
+        if (props.productIds.includes(product.id)) {
+            props.shoppingCart.filter( async (sc) => {
                 if (sc.product === product.id) { 
                     await axios ({
                         method: 'PUT',
                         url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
                         data: {
-                            user: `${sc.user}`,
+                            user: `${dced_user.user_id}`,
                             product: `${sc.product}`,
                             quantity: sc.quantity + 1,
                         }
                     }).then((response) => {
                         console.log(response.data);
-                        renderToggle();               
                     })
                 }
             })
@@ -106,15 +49,15 @@ const CustomerPage = (props) => {
                 method: 'POST',
                 url: 'http://127.0.01:8000/api/shoppingcarts/',
                 data: {
-                    user: `${decodedToken.user_id}`,
+                    user: `${dced_user.user_id}`,
                     product: `${product.id}`,
                     quantity: 1,
                 }
             }).then((response) => {
                 console.log(response.data);
-                renderToggle();
             }) 
         }
+        props.renderToggle();
     } 
     
 
@@ -191,22 +134,44 @@ const CustomerPage = (props) => {
                         <div className="col"/>
                         <div className="col">
                             <div className="shopping-cart-button">
-                                <button type="button" className="btn btn-primary position-relative">
+                                <button type="button" onClick={()=>handleShow()}className="btn btn-primary position-relative">
                                     Shopping Cart 🛒
                                     <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        {counter}
-                                        <span className="visually-hidden">unread messages</span>
+                                        {props.counter}
+                                        <span className="visually-hidden">Items in Cart</span>
                                     </span>
                                 </button>
                             </div>
                         </div>
                     </Container>
                 </Navbar>
+                <div>
+                    <Offcanvas show={show} placement="end" scroll={true} backdrop={false} onHide={()=>handleHide()}>
+                        <Offcanvas.Header closeButton>
+                            <Offcanvas.Title>😀 Ready to check out? </Offcanvas.Title>
+                        </Offcanvas.Header>
+                        <div>
+                            {props.shoppingCart.length > 0 ?
+                                props.shoppingCart.filter((sc) => {
+                                    return props.products.filter((product) => {
+                                        if (product.id === sc.product) {
+                                            return (
+                                                <div>{product.name}</div>
+                                            )                                                
+                                        }
+                                    })
+                                })
+                            :
+                                "nothing"                                
+                            }   
+                        </div> 
+                    </Offcanvas>
+                </div>
                 <Container className="shop-container-content" fluid>
                     <br/>
                     <div className="product-list">
-                        {products.length > 0 ?
-                            products.filter((product) => {
+                        {props.products.length > 0 ?
+                            props.products.filter((product) => {
                                 if (searchTerm === '') {
                                     return product;
                                 } else if (product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
@@ -221,8 +186,8 @@ const CustomerPage = (props) => {
                                             <Card.Body>
                                                 <Card.Title>{product.name}</Card.Title>
                                                 <Card.Text>
-                                                Some quick example text to build on the card title and make up the bulk of
-                                                the card's content.
+                                                    Some quick example text to build on the card title and make up the bulk of
+                                                    the card's content.
                                                 </Card.Text>
                                                 <div className="info-buy-buttons">
                                                     <Stack direction="horizontal" gap={5}>
