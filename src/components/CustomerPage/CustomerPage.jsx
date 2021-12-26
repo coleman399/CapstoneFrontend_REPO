@@ -12,8 +12,10 @@ import jwtDecode from "jwt-decode";
 const CustomerPage = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [show, setShow] = useState(false);
+    let count = 0;
 
-    useEffect(() => { 
+
+    useEffect(() => {
     },[]);
 
     const handleShow = () => {
@@ -150,17 +152,17 @@ const CustomerPage = (props) => {
                         <Offcanvas.Header closeButton>
                             <Offcanvas.Title>😀 Ready to check out? </Offcanvas.Title>
                         </Offcanvas.Header>
+                        {/* //Throwing an undefined error when adding an item to the shopping cart*/}   
                         <div>
-                            {props.shoppingCart.length > 0 ?
-                                props.shoppingCart.filter((sc) => {
-                                    return props.products.filter((product) => {
-                                        if (product.id === sc.product) {
-                                            return (
-                                                <div>{product.name}</div>
-                                            )                                                
-                                        }
-                                    })
-                                })
+                            {props.productInfo.length > 0 && count >= 0 && count < props.shoppingCart.length ?
+                                props.productInfo.map(product => 
+                                    <div key={product.id} className="row">
+                                        <div>
+                                            {`Product: ${product.name} Quantity: ${props.shoppingCart[count].quantity}`}
+                                        </div>
+                                        {count++}
+                                    </div>    
+                                )
                             :
                                 "nothing"                                
                             }   

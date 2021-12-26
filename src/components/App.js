@@ -19,7 +19,7 @@ function App() {
   const [shoppingCart, setShoppingCart] = useState([]);
   const [productIds, setProductIds] = useState([]);
   const [counter, setCounter] = useState(0);
-  const [product, setProduct] = useState('');
+  const [productInfo, setProductInfo] = useState([]);
   
   const [toggle, setToggle] = useState(false);
   
@@ -105,24 +105,29 @@ function App() {
   const getProductIds = (tempShoppingCart) => {
     const jwt = localStorage.getItem('token');
     const dced_user = jwtDecode(jwt);
-    let array = [];
+    let tempProductIds = [];
     tempShoppingCart.filter((sc) => {
       if (sc.user === dced_user.user_id) {
-        let newProductIds = array.concat(sc.product);
-        array = newProductIds;
-        setProductIds(array);
+        let newProductIds = tempProductIds.concat(sc.product);
+        tempProductIds = newProductIds;
+        setProductIds(tempProductIds);
       }
     })
-    console.log(productIds);  
+    console.log(tempProductIds);
+    getProductInfo(tempProductIds)  
   }
 
-  const getProduct = async (productId) => {
-    await axios({
-      method: 'GET',
-      url: 'http://127.0.0.1:8000/api/products/' + productId + '/',
-    }).then((response)=>{
-      setProduct(response.data)
-      console.log(response.data)
+  const getProductInfo = (tempProductIds) => {
+    let tempProductInfo = productInfo;
+    tempProductIds.map(async id => {
+      await axios({
+        method: 'GET',
+        url: 'http://127.0.0.1:8000/api/products/' + id + '/',
+      }).then((response)=>{
+        tempProductInfo = tempProductInfo.concat(response.data)
+        setProductInfo(tempProductInfo)
+        console.log(tempProductInfo)
+      })
     })
   }
 
@@ -147,13 +152,13 @@ function App() {
                 user={user} 
                 decodedToken={decodedToken} 
                 products={products}
-                product={product}
+                productInfo={productInfo}
                 shoppingCart={shoppingCart}
                 productIds={productIds}
                 counter={counter}
                 renderToggle={renderToggle}
                 getShoppingCart={getShoppingCart}
-                getProduct={getProduct}
+                getProductInfo={getProductInfo}
               /> 
               :
               <AdminPage />
