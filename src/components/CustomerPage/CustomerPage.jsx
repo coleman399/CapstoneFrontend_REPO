@@ -13,9 +13,6 @@ const CustomerPage = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [show, setShow] = useState(false);
 
-    useEffect(() => {
-    },[]);
-
     const handleShow = () => {
         setShow(true);
     }
@@ -51,7 +48,7 @@ const CustomerPage = (props) => {
                             url: 'http://127.0.01:8000/api/shoppingcarts/',
                             data: {
                                 user: `${dced_user.user_id}`,
-                                product: `${sc.product}`,
+                                product: `${product.id}`,
                                 quantity: 1,
                             }
                             }).then((response) => {
@@ -73,10 +70,12 @@ const CustomerPage = (props) => {
                 console.log(response.data);
             })
         }
-        props.renderToggle();
+        if (show === true) {
+            window.location.href = "/";
+        } else {
+            props.renderToggle();
+        }
     }
-    
-    
 
     return (
         <div className="customer-background">
@@ -165,10 +164,10 @@ const CustomerPage = (props) => {
                 <div>
                     <Offcanvas show={show} placement="end" scroll={true} backdrop={false} onHide={()=>handleHide()}>
                         <Offcanvas.Header closeButton>
-                            <Offcanvas.Title>😀 Ready to check out? </Offcanvas.Title>
+                            <Offcanvas.Title>😀 Ready to check out?</Offcanvas.Title>
                         </Offcanvas.Header> 
                         <div>
-                            {props.productInfo.length > 0 ?  
+                            {props.productInfo.length > 0 ?   
                                 props.productInfo.map(product =>
                                 <div key={product.id} className="row">
                                     <div>
