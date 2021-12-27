@@ -28,9 +28,10 @@ const CustomerPage = (props) => {
     const addToShoppingCart = async (product) => {
         const jwt = localStorage.getItem('token');
         const dced_user = jwtDecode(jwt);
-        if (props.productIds.includes(product.id)) {
-            props.shoppingCart.filter( async (sc) => {
-                if (sc.product === product.id) { 
+        let count = 0;
+        if (props.shoppingCart.length > 0) {
+            props.shoppingCart.filter(async sc => { 
+                if (sc.product === product.id) {
                     await axios ({
                         method: 'PUT',
                         url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
@@ -41,7 +42,22 @@ const CustomerPage = (props) => {
                         }
                     }).then((response) => {
                         console.log(response.data);
-                    })
+                    })                 
+                } else {
+                    count++;
+                    if (count === props.shoppingCart.length) {
+                        await axios ({
+                            method: 'POST',
+                            url: 'http://127.0.01:8000/api/shoppingcarts/',
+                            data: {
+                                user: `${dced_user.user_id}`,
+                                product: `${sc.product}`,
+                                quantity: 1,
+                            }
+                            }).then((response) => {
+                                console.log(response.data);
+                        })
+                    }
                 }
             })
         } else {
@@ -55,10 +71,11 @@ const CustomerPage = (props) => {
                 }
             }).then((response) => {
                 console.log(response.data);
-            }) 
+            })
         }
         props.renderToggle();
-    } 
+    }
+    
     
 
     return (
@@ -149,17 +166,16 @@ const CustomerPage = (props) => {
                     <Offcanvas show={show} placement="end" scroll={true} backdrop={false} onHide={()=>handleHide()}>
                         <Offcanvas.Header closeButton>
                             <Offcanvas.Title>😀 Ready to check out? </Offcanvas.Title>
-                        </Offcanvas.Header>
-                        {/* //Throwing an undefined error when adding an item to the shopping cart*/}   
+                        </Offcanvas.Header> 
                         <div>
                             {props.productInfo.length > 0 ?  
-                                    props.productInfo.map(product =>
-                                    <div key={product.id} className="row">
-                                        <div>
-                                            {`Product: ${product.product.name} Quantity: ${product.quantity}`}
-                                        </div>
-                                    </div>    
-                                    )
+                                props.productInfo.map(product =>
+                                <div key={product.id} className="row">
+                                    <div>
+                                        {`Product: ${product.product.name} Quantity: ${product.quantity}`}
+                                    </div>
+                                </div>    
+                                )
                             :
                                 "nothing"                                
                             }   
