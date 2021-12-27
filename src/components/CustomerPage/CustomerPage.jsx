@@ -12,6 +12,10 @@ import jwtDecode from "jwt-decode";
 const CustomerPage = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [show, setShow] = useState(false);
+    const [toggle, setToggle] = useState(true);
+
+    useEffect(() => {
+    },[show])
 
     const handleShow = () => {
         setShow(true);
@@ -70,11 +74,7 @@ const CustomerPage = (props) => {
                 console.log(response.data);
             })
         }
-        if (show === true) {
-            window.location.href = "/";
-        } else {
-            props.renderToggle();
-        }
+        props.renderToggle();
     }
 
     return (
@@ -161,25 +161,34 @@ const CustomerPage = (props) => {
                         </div>
                     </Container>
                 </Navbar>
-                <div>
-                    <Offcanvas show={show} placement="end" scroll={true} backdrop={false} onHide={()=>handleHide()}>
-                        <Offcanvas.Header closeButton>
-                            <Offcanvas.Title>😀 Ready to check out?</Offcanvas.Title>
-                        </Offcanvas.Header> 
+                <div className="shopping-cart">
+                    {props.productInfo.length > 0  ?
                         <div>
-                            {props.productInfo.length > 0 ?   
-                                props.productInfo.map(product =>
-                                <div key={product.id} className="row">
-                                    <div>
+                            <Offcanvas  show={show} placement="end" scroll={true} backdrop={false} onHide={()=>handleHide()}>
+                            <Offcanvas.Header closeButton>
+                                <Offcanvas.Title>😀 Ready to check out?</Offcanvas.Title>
+                            </Offcanvas.Header>
+                            <Offcanvas.Body> 
+                            {props.productInfo.map((product, key) => {
+                                return (
+                                    <div key={key}>
                                         {`Product: ${product.product.name} Quantity: ${product.quantity}`}
                                     </div>
-                                </div>    
                                 )
-                            :
-                                "nothing"                                
-                            }   
-                        </div> 
-                    </Offcanvas>
+                            })}
+                            </Offcanvas.Body>
+                            </Offcanvas>
+                        </div>                           
+                    :
+                        <Offcanvas show={show} placement="end" scroll={true} backdrop={false} onHide={()=>handleHide()}>
+                            <Offcanvas.Header closeButton>
+                                <Offcanvas.Title>😀 Ready to check out?</Offcanvas.Title>
+                            </Offcanvas.Header>
+                        <Offcanvas.Body>
+                            {`Nothing`}
+                        </Offcanvas.Body>
+                        </Offcanvas>
+                    }   
                 </div>
                 <Container className="shop-container-content" fluid>
                     <br/>
