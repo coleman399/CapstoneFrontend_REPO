@@ -105,28 +105,36 @@ function App() {
   const getProductIds = (tempShoppingCart) => {
     const jwt = localStorage.getItem('token');
     const dced_user = jwtDecode(jwt);
-    let tempProductIds = [];
+    let tempProductIdAndQuantity = [];
     tempShoppingCart.filter((sc) => {
       if (sc.user === dced_user.user_id) {
-        let newProductIds = tempProductIds.concat(sc.product);
-        tempProductIds = newProductIds;
-        setProductIds(tempProductIds);
+        let newProductIdAndQuantity = tempProductIdAndQuantity.concat({
+          productId: sc.product,
+          quantity: sc.quantity
+        });
+        tempProductIdAndQuantity = newProductIdAndQuantity;
+        setProductIds(tempProductIdAndQuantity);
       }
     })
-    console.log(tempProductIds);
-    getProductInfo(tempProductIds)  
+    console.log(tempProductIdAndQuantity);
+    getProductInfo(tempProductIdAndQuantity)  
   }
 
-  const getProductInfo = (tempProductIds) => {
+  const getProductInfo = (tempProductIdAndQuantity) => {
     let tempProductInfo = productInfo;
-    tempProductIds.map(async id => {
+    let counter = 0;
+    tempProductIdAndQuantity.map(async item => {
       await axios({
         method: 'GET',
-        url: 'http://127.0.0.1:8000/api/products/' + id + '/',
+        url: 'http://127.0.0.1:8000/api/products/' + item.productId + '/',
       }).then((response)=>{
-        tempProductInfo = tempProductInfo.concat(response.data)
+        tempProductInfo = tempProductInfo.concat({
+          product: response.data,
+          quantity: tempProductIdAndQuantity[counter].quantity
+        })
         setProductInfo(tempProductInfo)
         console.log(tempProductInfo)
+        counter++;
       })
     })
   }

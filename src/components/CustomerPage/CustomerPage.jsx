@@ -12,8 +12,6 @@ import jwtDecode from "jwt-decode";
 const CustomerPage = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [show, setShow] = useState(false);
-    let count = 0;
-
 
     useEffect(() => {
     },[]);
@@ -154,15 +152,14 @@ const CustomerPage = (props) => {
                         </Offcanvas.Header>
                         {/* //Throwing an undefined error when adding an item to the shopping cart*/}   
                         <div>
-                            {props.productInfo.length > 0 && count >= 0 && count < props.shoppingCart.length ?
-                                props.productInfo.map(product => 
+                            {props.productInfo.length > 0 ?  
+                                    props.productInfo.map(product =>
                                     <div key={product.id} className="row">
                                         <div>
-                                            {`Product: ${product.name} Quantity: ${props.shoppingCart[count].quantity}`}
+                                            {`Product: ${product.product.name} Quantity: ${product.quantity}`}
                                         </div>
-                                        {count++}
                                     </div>    
-                                )
+                                    )
                             :
                                 "nothing"                                
                             }   
