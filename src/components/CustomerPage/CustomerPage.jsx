@@ -8,59 +8,43 @@ import ProductImage from '../assets/100x100.png';
 import axios from 'axios';
 import './CustomerPage.css';
 import jwtDecode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const CustomerPage = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
-    const [show, setShow] = useState(false);
-    const [toggle, setToggle] = useState(true);
+    let navigate = useNavigate()
 
     useEffect(() => {
-    },[show])
+    },[])
 
-    const handleShow = () => {
-        setShow(true);
-    }
-
-    const handleHide = () => {
-        setShow(false);
+    const goToShoppingCartPage = () => {
+        navigate("/shopping-cart")
     }
 
     //add try-catch 
-    const addToShoppingCart = async (product) => {
+    const addToShoppingCart = async product => {
         const jwt = localStorage.getItem('token');
         const dced_user = jwtDecode(jwt);
-        let count = 0;
-        if (props.shoppingCart.length > 0) {
-            props.shoppingCart.filter(async sc => { 
-                if (sc.product === product.id) {
-                    await axios ({
-                        method: 'PUT',
-                        url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
-                        data: {
-                            user: `${dced_user.user_id}`,
-                            product: `${sc.product}`,
-                            quantity: sc.quantity + 1,
-                        }
-                    }).then((response) => {
-                        console.log(response.data);
-                    })                 
-                } else {
-                    count++;
-                    if (count === props.shoppingCart.length) {
-                        await axios ({
-                            method: 'POST',
-                            url: 'http://127.0.01:8000/api/shoppingcarts/',
-                            data: {
-                                user: `${dced_user.user_id}`,
-                                product: `${product.id}`,
-                                quantity: 1,
-                            }
-                            }).then((response) => {
-                                console.log(response.data);
-                        })
-                    }
+        let exist = false;
+        let shoppingCart;
+        props.shoppingCart.filter(sc => {
+            if (sc.product === product.id) {
+                exist = true;
+                shoppingCart = sc;
+        }}); 
+        if (exist === true) {
+            await axios ({
+                method: 'PUT',
+                url: 'http://127.0.01:8000/api/shoppingcarts/' + shoppingCart.id + '/',
+                data: {
+                    user: `${dced_user.user_id}`,
+                    product: `${shoppingCart.product}`,
+                    quantity: shoppingCart.quantity + 1,
                 }
-            })
+            }).then((response) => {
+                console.log(response.data);
+                props.renderToggle();
+            })                  
         } else {
             await axios ({
                 method: 'POST',
@@ -72,9 +56,9 @@ const CustomerPage = (props) => {
                 }
             }).then((response) => {
                 console.log(response.data);
+                props.renderToggle();
             })
         }
-        props.renderToggle();
     }
 
     return (
@@ -150,7 +134,7 @@ const CustomerPage = (props) => {
                         <div className="col"/>
                         <div className="col">
                             <div className="shopping-cart-button">
-                                <button type="button" onClick={()=>handleShow()}className="btn btn-primary position-relative">
+                                <button type="button" onClick={()=>goToShoppingCartPage()}className="btn btn-primary position-relative">
                                     Shopping Cart 🛒
                                     <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                         {props.counter}
@@ -161,35 +145,6 @@ const CustomerPage = (props) => {
                         </div>
                     </Container>
                 </Navbar>
-                <div className="shopping-cart">
-                    {props.productInfo.length > 0  ?
-                        <div>
-                            <Offcanvas  show={show} placement="end" scroll={true} backdrop={false} onHide={()=>handleHide()}>
-                            <Offcanvas.Header closeButton>
-                                <Offcanvas.Title>😀 Ready to check out?</Offcanvas.Title>
-                            </Offcanvas.Header>
-                            <Offcanvas.Body> 
-                            {props.productInfo.map((product, key) => {
-                                return (
-                                    <div key={key}>
-                                        {`Product: ${product.product.name} Quantity: ${product.quantity}`}
-                                    </div>
-                                )
-                            })}
-                            </Offcanvas.Body>
-                            </Offcanvas>
-                        </div>                           
-                    :
-                        <Offcanvas show={show} placement="end" scroll={true} backdrop={false} onHide={()=>handleHide()}>
-                            <Offcanvas.Header closeButton>
-                                <Offcanvas.Title>😀 Ready to check out?</Offcanvas.Title>
-                            </Offcanvas.Header>
-                        <Offcanvas.Body>
-                            {`Nothing`}
-                        </Offcanvas.Body>
-                        </Offcanvas>
-                    }   
-                </div>
                 <Container className="shop-container-content" fluid>
                     <br/>
                     <div className="product-list">

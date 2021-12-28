@@ -4,7 +4,8 @@ import Register from './Register/Register';
 import AdminPage from './AdminPage/AdminPage';
 import PageNotFound from './PageNotFound/PageNotFound';
 import CustomerPage from './CustomerPage/CustomerPage';
-import axios from "axios"
+import ShoppingCartPage from './ShoppingCartPage/ShoppingCartPage';
+import axios from "axios";
 import {
     BrowserRouter as Router,
     Routes,
@@ -17,7 +18,7 @@ function App() {
   const [decodedToken, setDecodedToken] = useState();
   const [products, setProducts] = useState([]);
   const [shoppingCart, setShoppingCart] = useState([]);
-  const [productIds, setProductIds] = useState([]);
+  const [productIdAndQuantity, setProductIdAndQuantity] = useState([]);
   const [counter, setCounter] = useState(0);
   const [productInfo, setProductInfo] = useState([]);
   
@@ -86,7 +87,7 @@ function App() {
     })
     console.log(shoppingCart);
     getShoppingCartCount(tempShoppingCart);
-    getProductIds(tempShoppingCart); 
+    getProductIdAndQuantity(tempShoppingCart); 
   }
 
   const getShoppingCartCount = (tempShoppingCart) => {
@@ -102,7 +103,7 @@ function App() {
     console.log(counter);
   }
 
-  const getProductIds = (tempShoppingCart) => {
+  const getProductIdAndQuantity = (tempShoppingCart) => {
     const jwt = localStorage.getItem('token');
     const dced_user = jwtDecode(jwt);
     let tempProductIdAndQuantity = [];
@@ -112,30 +113,29 @@ function App() {
           productId: sc.product,
           quantity: sc.quantity
         });
-        tempProductIdAndQuantity = newProductIdAndQuantity;
-        setProductIds(tempProductIdAndQuantity);
+        tempProductIdAndQuantity = newProductIdAndQuantity; 
       }
     })
-    console.log(tempProductIdAndQuantity);
+    console.log(`ProductIdAndQuantity: ${tempProductIdAndQuantity}`);
+    setProductIdAndQuantity(tempProductIdAndQuantity);
     getProductInfo(tempProductIdAndQuantity)  
   }
 
   const getProductInfo = (tempProductIdAndQuantity) => {
-    let tempProductInfo = productInfo;
-    let counter = 0;
+    let tempProductInfo = [];
     tempProductIdAndQuantity.map(async item => {
       await axios({
         method: 'GET',
         url: 'http://127.0.0.1:8000/api/products/' + item.productId + '/',
       }).then((response)=>{
-        tempProductInfo = tempProductInfo.concat({
+        let newProductInfo = tempProductInfo.concat({
           product: response.data,
-          quantity: tempProductIdAndQuantity[counter].quantity
-        })
-        setProductInfo(tempProductInfo)
-        console.log(tempProductInfo)
-        counter++;
+          quantity: item.quantity
+        });
+        tempProductInfo = newProductInfo;
       })
+      console.log(`tempProductInfo: ${tempProductInfo}`)
+      setProductInfo(tempProductInfo)
     })
   }
 
@@ -162,7 +162,7 @@ function App() {
                 products={products}
                 productInfo={productInfo}
                 shoppingCart={shoppingCart}
-                productIds={productIds}
+                productIdAndQuantity={productIdAndQuantity}
                 counter={counter}
                 renderToggle={renderToggle}
                 getShoppingCart={getShoppingCart}
@@ -175,6 +175,13 @@ function App() {
         }/>
         <Route path="/register" element={
           <Register />
+        }/>
+        <Route path="/shopping-cart" element={
+          <ShoppingCartPage 
+            productInfo={productInfo}
+            shoppingCart={shoppingCart}
+            renderToggle={renderToggle}
+          />
         }/>
         <Route path="*" element={
           <PageNotFound />
