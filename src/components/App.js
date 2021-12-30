@@ -21,11 +21,12 @@ function App() {
   const [productIdAndQuantity, setProductIdAndQuantity] = useState([]);
   const [counter, setCounter] = useState(0);
   const [productInfo, setProductInfo] = useState([]);
-  
+  const [budget, setBudget] = useState();
   const [toggle, setToggle] = useState(false);
   
   useEffect(() => {
     getToken();
+    getBudget();
   }, [toggle])
 
   const getToken = () => {
@@ -81,7 +82,7 @@ function App() {
     let tempShoppingCart = [];
     allShoppingCarts.filter((sc)=> {
         if (sc.user === dced_user.user_id) {
-            tempShoppingCart = tempShoppingCart.concat(sc)
+            tempShoppingCart = tempShoppingCart.concat(sc);
             setShoppingCart(tempShoppingCart);
         }
     })
@@ -99,7 +100,7 @@ function App() {
       tempCounter = tempCounter + sc.quantity;
       }
     })
-    setCounter(tempCounter)
+    setCounter(tempCounter);
     console.log(counter);
   }
 
@@ -118,7 +119,7 @@ function App() {
     })
     console.log(`ProductIdAndQuantity: ${tempProductIdAndQuantity}`);
     setProductIdAndQuantity(tempProductIdAndQuantity);
-    getProductInfo(tempProductIdAndQuantity)  
+    getProductInfo(tempProductIdAndQuantity);  
   }
 
   const getProductInfo = (tempProductIdAndQuantity) => {
@@ -134,8 +135,18 @@ function App() {
         });
         tempProductInfo = newProductInfo;
       })
-      console.log(`tempProductInfo: ${tempProductInfo}`)
-      setProductInfo(tempProductInfo)
+      console.log(`tempProductInfo: ${tempProductInfo}`);
+      setProductInfo(tempProductInfo);
+    })
+  }
+
+  const getBudget = async () => {
+    await axios ({
+      method: 'GET',
+      url: 'http://127.0.01:8000/api/budgets/' + 1 + '/',
+    }).then((response)=>{
+      console.log(`budget: ${response.data}`);
+      setBudget(response.data);
     })
   }
 
@@ -145,7 +156,7 @@ function App() {
   }
 
   const renderToggle = () => {
-    setToggle(!toggle)     
+    setToggle(!toggle);     
   }
 
   return (
@@ -180,6 +191,7 @@ function App() {
           <ShoppingCartPage 
             productInfo={productInfo}
             shoppingCart={shoppingCart}
+            budget={budget}
             renderToggle={renderToggle}
           />
         }/>
