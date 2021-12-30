@@ -79,6 +79,13 @@ const CustomerPage = (props) => {
                             <p className="company-description">Food and Drug</p>
                         </Stack>
                     </Navbar.Brand>
+                    <div className="text-end">
+                        <Stack direction="horizontal" gap={3}>
+                            <div>{`Welcome ${props.user.first_name}`}</div>
+                            <div className="vr"/>
+                            <Button onClick={()=>props.logout()}>Logout</Button>
+                        </Stack>
+                    </div>
                 </Container>
             </Navbar>
             <Carousel controls="false" fade>
@@ -99,7 +106,7 @@ const CustomerPage = (props) => {
                         alt="Second slide"
                     />
                     <Carousel.Caption className="border rounded-pill">
-                        <h2 className="carousel-header-two">Here Only For You</h2>
+                        <h2 className="carousel-header-two">Here Only For You and Your Family</h2>
                     </Carousel.Caption>
                 </Carousel.Item>
                 <Carousel.Item>

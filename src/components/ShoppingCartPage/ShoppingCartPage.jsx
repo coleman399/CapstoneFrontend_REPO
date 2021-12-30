@@ -133,6 +133,10 @@ const ShoppingCartPage = (props) => {
         setShowThankYou(true)
     }
 
+    const goBack = () => {
+        navigate("/");
+    }
+
     const goToCustomerPage = () => {
         window.location.reload();
         window.location.href = "/";
@@ -162,6 +166,8 @@ const ShoppingCartPage = (props) => {
                             <div>{`Total: ${formatNumber(totalPrice)}`}</div>
                             <div className="vr"/>
                             <Button onClick={()=>handleShow()}>Confirm Purchase</Button>
+                            <div className="vr"/>
+                            <Button onClick={()=>goBack()}>Go Back</Button>
                         </Stack>
                     </div>
                 </Container>
@@ -199,8 +205,8 @@ const ShoppingCartPage = (props) => {
                             })}
                             <Modal show={show} onHide={()=>handleHide()}>
                                 <Modal.Body>
-                                    {`Total: ${formatNumber(totalPrice)}\n`}
-                                    Complete Purchase? 
+                                    {`Total: ${formatNumber(totalPrice)}`}
+                                    <div>Complete Purchase?</div> 
                                 </Modal.Body>
                                 <Modal.Footer>
                                     <Stack direction="horizontal" gap={3}>
@@ -212,7 +218,7 @@ const ShoppingCartPage = (props) => {
                             </Modal>
                         </div>                           
                     :
-                        `You have no items in your cart. 🤭`
+                        <div className="text-center"><br/>You have no items in your cart. 🤭<br/><br/></div>
                     }   
                 </Container>
                 <br/>
@@ -226,11 +232,6 @@ const ShoppingCartPage = (props) => {
                         <Button onClick={()=>goToCustomerPage()}>Go Home</Button>
                     </Modal.Footer>
                 </Modal>
-            </div>
-            <div>
-                <br/>
-                <br/>
-                <br/>
             </div>
         </div>
     );

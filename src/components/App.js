@@ -178,6 +178,7 @@ function App() {
                 renderToggle={renderToggle}
                 getShoppingCart={getShoppingCart}
                 getProductInfo={getProductInfo}
+                logout={logout}
               /> 
               :
               <AdminPage />
