@@ -14,14 +14,6 @@ const ShoppingCartPage = (props) => {
     let totalPrice = 0.00;
     let totalCost= 0.00;
 
-    const formatNumber = (number) => {
-        let formattedNumber = new Intl.NumberFormat("en-US", {
-        style: 'currency',
-        currency: 'USD'
-        }).format(number);
-        return formattedNumber;
-    }
-
     const deleteShoppingCart = (shoppingCartId) => {
         props.shoppingCart.filter(async sc => {
             if (sc.id === shoppingCartId) {
@@ -163,7 +155,7 @@ const ShoppingCartPage = (props) => {
                     <div className="text-end">
                         <div>{getTotals()}</div>
                         <Stack direction="horizontal" gap={3}>
-                            <div>{`Total: ${formatNumber(totalPrice)}`}</div>
+                            <div>{`Total: ${props.formatNumber(totalPrice)}`}</div>
                             <div className="vr"/>
                             <Button onClick={()=>handleShow()}>Confirm Purchase</Button>
                             <div className="vr"/>
@@ -186,10 +178,9 @@ const ShoppingCartPage = (props) => {
                                             <Card.Body>
                                                 <Card.Title>{product.product.name}</Card.Title>
                                                 <Card.Text>
-                                                    Some quick example text to build on the card title and make up the bulk of
-                                                    the card's content.
+                                                    {product.product.description}
                                                 </Card.Text>
-                                                <div className="text-center">{`Price: ${formatNumber(product.product.salesPrice*product.quantity)}`}</div>
+                                                <div className="text-center">{`Price: ${props.formatNumber(product.product.salesPrice*product.quantity)}`}</div>
                                                 <div className="info-buy-buttons">
                                                     <Stack direction="horizontal" gap={5}>
                                                         <Button onClick={()=>subtractFromCart(product)}>-</Button>
@@ -205,8 +196,9 @@ const ShoppingCartPage = (props) => {
                             })}
                             <Modal show={show} onHide={()=>handleHide()}>
                                 <Modal.Body>
-                                    {`Total: ${formatNumber(totalPrice)}`}
-                                    <div>Complete Purchase?</div> 
+                                    {`Total: ${props.formatNumber(totalPrice)}`}
+                                    <div>Complete Purchase?</div>
+                                    <div>This is where we would collect payment information.</div> 
                                 </Modal.Body>
                                 <Modal.Footer>
                                     <Stack direction="horizontal" gap={3}>

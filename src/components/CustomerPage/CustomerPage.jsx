@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Spinner, Container, Offcanvas, Row, Col, Navbar, Image, Stack, Carousel, Card, Button, ListGroup, Form, InputGroup, FormControl } from 'react-bootstrap';
+import { Spinner, Container, Navbar, Stack, Carousel, Card, Button, InputGroup, FormControl, OverlayTrigger, Popover } from 'react-bootstrap';
 import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import EmployeeOne from '../assets/Employee1_Preview.png';
 import EmployeeTwo from '../assets/Employee2_Preview.png';
@@ -12,10 +12,8 @@ import { useNavigate } from "react-router-dom";
 
 const CustomerPage = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [aisle, setAisle] = useState('');
     let navigate = useNavigate()
-
-    useEffect(() => {
-    },[])
 
     const goToShoppingCartPage = () => {
         navigate("/shopping-cart")
@@ -59,6 +57,26 @@ const CustomerPage = (props) => {
                 props.renderToggle();
             })
         }
+    }
+
+    const setAisleToFood = () => {
+        setAisle("Food");
+        props.renderToggle();
+    }
+
+    const setAisleToDrink = () => {
+        setAisle("Drink");
+        props.renderToggle();
+    }
+    
+    const setAisleToMisc = () => {
+        setAisle("Misc");
+        props.renderToggle();
+    }
+
+    const setAisleToAll = () => {
+        setAisle("");
+        props.renderToggle();
     }
 
     return (
@@ -139,6 +157,17 @@ const CustomerPage = (props) => {
                             </InputGroup>
                         </div>
                         <div className="col"/>
+                            <div className="text-center">
+                                <Stack direction="horizontal" gap={3}>
+                                    <Button onClick={()=>setAisleToFood()}>Food Aisle</Button>
+                                    <div className="vr"/>
+                                    <Button onClick={()=>setAisleToDrink()}>Drink Aisle</Button>
+                                    <div className="vr"/>
+                                    <Button onClick={()=>setAisleToMisc()}>Misc Aisle</Button>
+                                    <div className="vr"/>
+                                    <Button onClick={()=>setAisleToAll()}>All</Button>
+                                </Stack>
+                            </div>
                         <div className="col">
                             <div className="shopping-cart-button">
                                 <button type="button" onClick={()=>goToShoppingCartPage()}className="btn btn-primary position-relative">
@@ -157,9 +186,13 @@ const CustomerPage = (props) => {
                     <div className="product-list">
                         {props.products.length > 0 ?
                             props.products.filter((product) => {
-                                if (searchTerm === '') {
+                                if (searchTerm === '' && aisle === '') {
                                     return product;
-                                } else if (product.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+                                } else if (searchTerm === '' && aisle === product.aisleName) {
+                                    return product;
+                                } else if (product.name.toLowerCase().includes(searchTerm.toLowerCase()) && aisle === '') {
+                                    return product;
+                                } else if (product.name.toLowerCase().includes(searchTerm.toLowerCase()) && aisle === product.aisleName) {
                                     return product;
                                 }
                             }).map((product, key) => {
@@ -171,12 +204,25 @@ const CustomerPage = (props) => {
                                             <Card.Body>
                                                 <Card.Title>{product.name}</Card.Title>
                                                 <Card.Text>
-                                                    Some quick example text to build on the card title and make up the bulk of
-                                                    the card's content.
+                                                    {product.description}
                                                 </Card.Text>
+                                                <div className="text-center">{`Price: ${props.formatNumber(product.salesPrice)}`}</div>
                                                 <div className="info-buy-buttons">
                                                     <Stack direction="horizontal" gap={5}>
-                                                        <Button> ℹ️ </Button>
+                                                        <OverlayTrigger
+                                                            trigger="click"
+                                                            placement="bottom"
+                                                            overlay={
+                                                                <Popover>
+                                                                    <Popover.Header as="h3">{`Product Information`}</Popover.Header>
+                                                                    <Popover.Body>
+                                                                        <strong>Holy guacamole!</strong> Check this all this info.
+                                                                    </Popover.Body>
+                                                                </Popover>
+                                                            }
+                                                        >
+                                                            <Button> ℹ️ </Button>
+                                                        </OverlayTrigger>
                                                         <div className="vr" />
                                                         <Button onClick={()=>addToShoppingCart(product)} type="submit"> 🛒 </Button>
                                                     </Stack>

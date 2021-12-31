@@ -21,7 +21,7 @@ function App() {
   const [productIdAndQuantity, setProductIdAndQuantity] = useState([]);
   const [counter, setCounter] = useState(0);
   const [productInfo, setProductInfo] = useState([]);
-  const [budget, setBudget] = useState();
+  const [budget, setBudget] = useState({});
   const [toggle, setToggle] = useState(false);
   
   useEffect(() => {
@@ -141,13 +141,12 @@ function App() {
   }
 
   const getBudget = async () => {
-    await axios ({
+    var results = await axios ({
       method: 'GET',
       url: 'http://127.0.01:8000/api/budgets/' + 1 + '/',
-    }).then((response)=>{
-      console.log(`budget: ${response.data}`);
-      setBudget(response.data);
-    })
+    });
+    console.log(`budget: ${results.data}`);
+    setBudget(results.data);
   }
 
   const logout = () => {
@@ -157,6 +156,14 @@ function App() {
 
   const renderToggle = () => {
     setToggle(!toggle);     
+  }
+
+  const formatNumber = (number) => {
+    let formattedNumber = new Intl.NumberFormat("en-US", {
+      style: 'currency',
+      currency: 'USD'
+    }).format(number);
+      return formattedNumber;
   }
 
   return (
@@ -179,9 +186,14 @@ function App() {
                 getShoppingCart={getShoppingCart}
                 getProductInfo={getProductInfo}
                 logout={logout}
+                formatNumber={formatNumber}
               /> 
               :
-              <AdminPage />
+              <AdminPage
+                budget={budget}
+                getBudget={getBudget}
+                renderToggle={renderToggle} 
+              />
             ) 
           )
         }/>
@@ -194,6 +206,7 @@ function App() {
             shoppingCart={shoppingCart}
             budget={budget}
             renderToggle={renderToggle}
+            formatNumber={formatNumber}
           />
         }/>
         <Route path="*" element={
