@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Login from './Login/Login';
-import Register from './Register/Register';
+import Register from './RegisterEmployee/RegisterEmployee';
 import AdminPage from './AdminPage/AdminPage';
 import PageNotFound from './PageNotFound/PageNotFound';
 import CustomerPage from './CustomerPage/CustomerPage';
@@ -12,6 +12,7 @@ import {
     Route,
 } from "react-router-dom";
 import jwtDecode from "jwt-decode";
+import { getDatasetAtEvent } from 'react-chartjs-2';
 
 function App() {
   const [user, setUser] = useState('');
@@ -23,6 +24,9 @@ function App() {
   const [budget, setBudget] = useState({});
   const [budgets, setBudgets] = useState({});
   const [toggle, setToggle] = useState(false);
+  const [totalSales, setTotalSales] = useState([]);
+  const [totalExpenses, setTotalExpenses] = useState([]);
+  const [totalProfit, setTotalProfit] = useState([]);
   
   useEffect(() => {
     getToken();
@@ -139,7 +143,6 @@ function App() {
     })
   }
 
-
   //need to get all budgets and set the last one to budget and all to budgets
   const getBudgets = async () => {
     var results = await axios ({
@@ -157,6 +160,48 @@ function App() {
       setBudget(results.data[results.data.length-1])
     }
     setBudgets(results.data);
+    getTotalSales(results.data);
+  }
+
+  const getTotalSales = (allBudgets) => {
+    let tempTotalSales = [];
+    allBudgets.map(budget => {
+        let newTotalSales = tempTotalSales.concat({
+            x: budget.date, 
+            y: budget.total_sales
+        });
+        tempTotalSales = newTotalSales;
+    });
+    console.log(`tempTotalSales: ${tempTotalSales}`);
+    setTotalSales(tempTotalSales);
+    getTotalExpenses(allBudgets);
+  }
+
+  const getTotalExpenses = (allBudgets) => {
+    let tempTotalExpenses = [];
+    allBudgets.map(budget => {
+        let newTotalExpenses = tempTotalExpenses.concat({
+            x: budget.date, 
+            y: budget.total_expenses
+        });
+        tempTotalExpenses = newTotalExpenses;
+    });
+    console.log(`tempTotalExpenses: ${tempTotalExpenses}`);
+    setTotalExpenses(tempTotalExpenses);
+    getTotalProfit(allBudgets);
+  }
+
+  const getTotalProfit = (allBudgets) => {
+    let tempTotalProfit = [];
+    allBudgets.map(budget => {
+        let newTotalProfit = tempTotalProfit.concat({
+            x: budget.date, 
+            y: budget.total_profit
+        });
+        tempTotalProfit = newTotalProfit;
+    });
+    console.log(`tempTotalProfit: ${tempTotalProfit}`);
+    setTotalProfit(tempTotalProfit);
   }
 
   const logout = () => {
@@ -201,6 +246,9 @@ function App() {
               <AdminPage
                 budget={budget}
                 budgets={budgets}
+                totalSales={totalSales}
+                totalExpenses={totalExpenses}
+                totalProfit={totalProfit}
                 getBudgets={getBudgets}
                 renderToggle={renderToggle} 
               />

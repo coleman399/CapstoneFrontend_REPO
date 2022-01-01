@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Stack, Col, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './Register.css';
+import './RegisterProduct.css';
 
-const Register = (props) => {
+const RegisterProduct = (props) => {
     const [firstname, setFirstName] = useState()
     const [lastname, setLastName] = useState()
     const [employeeId, setEmployeeId] = useState()
     const [password, setPassword] = useState()
     const [salary, setSalary] = useState()
     const [email, setEmail] = useState()
+    const [isAdmin, setIsAdmin] = useState(false)
     const navigate = useNavigate()
     let tempUser = {
         employeeId: employeeId,
@@ -18,6 +19,7 @@ const Register = (props) => {
         email: email,
         firstname: firstname,
         lastname: lastname,
+        is_staff: isAdmin,
         salary: salary,
     }
 
@@ -33,7 +35,7 @@ const Register = (props) => {
                     email: tempUser.email,
                     first_name: tempUser.firstname,
                     last_name: tempUser.lastname,
-                    is_staff: false,
+                    is_staff: tempUser.is_staff,
                     salary: tempUser.salary
                 },
             });
@@ -58,25 +60,21 @@ const Register = (props) => {
         }}
     }
 
-    function handleOnClick() {
-      navigate("/")
-    }
-
     return ( 
-      <div className="login-background">
+      <div>
         <Container>
-          <Row className="justify-content-md-center">
+          <Row>
             <Col>
-              <div className="p-5 position-absolute top-50 start-50 translate-middle border rounded bg-white">
-                <h4 className="text-center">Register</h4>
+              <div className="p-5 border rounded bg-white">
+                <h4 className="text-center">Register Product</h4>
                 <br/>
                 <Form className="Register" onSubmit={handleSubmit}>
                     <Form.Group controlId="employeeId">
-                      <Form.Label>Employee Id</Form.Label>
+                      <Form.Label>Name</Form.Label>
                         <Form.Control onChange={e => setEmployeeId(e.target.value)} type="text" required />
                     </Form.Group>
                     <Form.Group controlId="password">
-                      <Form.Label>Password</Form.Label>
+                      <Form.Label>Temp Password</Form.Label>
                         <Form.Control onChange={e => setPassword(e.target.value)} type="password" required />
                     <Form.Group controlId="email">
                       <Form.Label>Email</Form.Label>
@@ -95,12 +93,13 @@ const Register = (props) => {
                       <Form.Label>Salary</Form.Label>
                         <Form.Control onChange={e => setSalary(e.target.value)} type="text" required />
                     </Form.Group>
+                    <Form.Group controlId="isAdmin">
+                      <Form.Check type="switch" label="Admin" as="input" onChange={e => setIsAdmin(!isAdmin)}/>
+                    </Form.Group>
                     <br/>
-                    <Stack direction="horizontal" gap={5}>
-                      <Button onClick={handleOnClick}>Sign In</Button>
-                      <div className="vr" />
+                    <div className="text-center">
                       <Button type="submit">Submit</Button>
-                    </Stack>
+                    </div>
                 </Form>
               </div>
             </Col>
@@ -110,4 +109,4 @@ const Register = (props) => {
     );
 }
  
-export default Register;
+export default RegisterProduct;

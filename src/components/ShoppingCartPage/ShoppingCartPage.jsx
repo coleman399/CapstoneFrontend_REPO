@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Spinner, Container, Offcanvas, Row, Col, Navbar, Image, Stack, Carousel, Card, Button, ListGroup, Form, InputGroup, FormControl } from 'react-bootstrap';
+import { Modal, Container, Navbar, Stack, Card, Button } from 'react-bootstrap';
 import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import jwtDecode from "jwt-decode";
 import axios from "axios";
