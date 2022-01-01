@@ -7,16 +7,18 @@ import './Register.css';
 const Register = (props) => {
     const [firstname, setFirstName] = useState()
     const [lastname, setLastName] = useState()
-    const [username, setUserName] = useState()
+    const [employeeId, setEmployeeId] = useState()
     const [password, setPassword] = useState()
+    const [salary, setSalary] = useState()
     const [email, setEmail] = useState()
     const navigate = useNavigate()
     let tempUser = {
-        username: username,
+        employeeId: employeeId,
         password: password,
         email: email,
         firstname: firstname,
         lastname: lastname,
+        salary: salary,
     }
 
     const handleSubmit = async (event) => {
@@ -26,21 +28,23 @@ const Register = (props) => {
                 method: "POST",
                 url: 'http://127.0.0.1:8000/api/auth/register/',
                  data: {
-                    username: tempUser.username,
+                    employee_id: tempUser.employeeId,
                     password: tempUser.password,
                     email: tempUser.email,
                     first_name: tempUser.firstname,
                     last_name: tempUser.lastname,
                     is_staff: false,
+                    salary: tempUser.salary
                 },
             });
             console.log(tempUser);
             alert("🎉 Account Created! 🎉")           
-            setUserName("");
+            setEmployeeId("");
             setPassword("");
             setEmail("");
             setFirstName("");
             setLastName("");
+            setSalary("");
             navigate("/")
         } catch (e) {
         if (e.response.status === 401) {
@@ -67,9 +71,9 @@ const Register = (props) => {
                 <h4 className="text-center">Register</h4>
                 <br/>
                 <Form className="Register" onSubmit={handleSubmit}>
-                    <Form.Group controlId="username">
-                      <Form.Label>User Name</Form.Label>
-                        <Form.Control onChange={e => setUserName(e.target.value)} type="text" required />
+                    <Form.Group controlId="employeeId">
+                      <Form.Label>Employee Id</Form.Label>
+                        <Form.Control onChange={e => setEmployeeId(e.target.value)} type="text" required />
                     </Form.Group>
                     <Form.Group controlId="password">
                       <Form.Label>Password</Form.Label>
@@ -86,6 +90,10 @@ const Register = (props) => {
                     <Form.Group controlId="lastname">
                       <Form.Label>Last Name</Form.Label>
                         <Form.Control onChange={e => setLastName(e.target.value)} type="text" required />
+                    </Form.Group>
+                    <Form.Group controlId="lastname">
+                      <Form.Label>Salary</Form.Label>
+                        <Form.Control onChange={e => setSalary(e.target.value)} type="text" required />
                     </Form.Group>
                     <br/>
                     <Stack direction="horizontal" gap={5}>

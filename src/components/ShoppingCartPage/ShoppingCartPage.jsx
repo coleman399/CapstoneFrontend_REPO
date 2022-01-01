@@ -36,7 +36,7 @@ const ShoppingCartPage = (props) => {
                     method: 'PUT',
                     url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
                     data: {
-                        user: `${dced_user.user_id}`,
+                        user: `${dced_user.employee_id}`,
                         product: `${sc.product}`,
                         quantity: sc.quantity - 1,
                     }
@@ -63,7 +63,7 @@ const ShoppingCartPage = (props) => {
                     method: 'PUT',
                     url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
                     data: {
-                        user: `${dced_user.user_id}`,
+                        user: `${dced_user.employee_id}`,
                         product: `${sc.product}`,
                         quantity: sc.quantity + 1,
                     }
@@ -75,17 +75,19 @@ const ShoppingCartPage = (props) => {
         })
     }
 
+    //need to get the last budget and use that as the budget data
+    //also need to subtract the total_price from employee salary
     const completePurchase = async () => {
         let price = parseFloat(totalPrice) + parseFloat(props.budget.total_sales);
         let total_price = (price).toFixed(2);
         let cost = parseFloat(totalCost) + parseFloat(props.budget.total_expenses);
         let total_cost = (cost).toFixed(2);
         let saleProfit = total_price - total_cost;
-        let profit = parseFloat(saleProfit);
+        let profit = parseFloat(saleProfit) + parseFloat(props.budget.total_profit);
         let total_profit = profit.toFixed(2);
         await axios ({
-            method: 'PUT',
-            url: 'http://127.0.01:8000/api/budgets/' + 1 + '/',
+            method: 'POST',
+            url: 'http://127.0.01:8000/api/budgets/',
             data: {
                 total_sales: total_price,
                 total_expenses: total_cost,

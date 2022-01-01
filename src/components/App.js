@@ -15,25 +15,24 @@ import jwtDecode from "jwt-decode";
 
 function App() {
   const [user, setUser] = useState('');
-  const [decodedToken, setDecodedToken] = useState();
   const [products, setProducts] = useState([]);
   const [shoppingCart, setShoppingCart] = useState([]);
   const [productIdAndQuantity, setProductIdAndQuantity] = useState([]);
   const [counter, setCounter] = useState(0);
   const [productInfo, setProductInfo] = useState([]);
   const [budget, setBudget] = useState({});
+  const [budgets, setBudgets] = useState({});
   const [toggle, setToggle] = useState(false);
   
   useEffect(() => {
     getToken();
-    getBudget();
+    getBudgets();
   }, [toggle])
 
   const getToken = () => {
     try {  
       const jwt = localStorage.getItem('token');
       const dced_user = jwtDecode(jwt);
-      setDecodedToken(dced_user);
       login(jwt, dced_user);
     } catch (error) {
       console.log(error);
@@ -44,7 +43,7 @@ function App() {
     try {
       var results = await axios({
         method: 'GET',
-        url: 'http://127.0.0.1:8000/api/auth/' + dced_user.user_id + '/',
+        url: 'http://127.0.0.1:8000/api/auth/' + dced_user.employee_id + '/',
         headers: {Authorization: `Bearer ${jwt}`},
       })
       console.log(results.data);
@@ -81,7 +80,7 @@ function App() {
     const dced_user = jwtDecode(jwt);
     let tempShoppingCart = [];
     allShoppingCarts.filter((sc)=> {
-        if (sc.user === dced_user.user_id) {
+        if (sc.user === dced_user.employee_id) {
             tempShoppingCart = tempShoppingCart.concat(sc);
             setShoppingCart(tempShoppingCart);
         }
@@ -96,7 +95,7 @@ function App() {
     const dced_user = jwtDecode(jwt);
     let tempCounter = 0;
     tempShoppingCart.filter((sc) => { 
-      if (sc.user === dced_user.user_id) {
+      if (sc.user === dced_user.employee_id) {
       tempCounter = tempCounter + sc.quantity;
       }
     })
@@ -109,7 +108,7 @@ function App() {
     const dced_user = jwtDecode(jwt);
     let tempProductIdAndQuantity = [];
     tempShoppingCart.filter((sc) => {
-      if (sc.user === dced_user.user_id) {
+      if (sc.user === dced_user.employee_id) {
         let newProductIdAndQuantity = tempProductIdAndQuantity.concat({
           productId: sc.product,
           quantity: sc.quantity
@@ -140,13 +139,24 @@ function App() {
     })
   }
 
-  const getBudget = async () => {
+
+  //need to get all budgets and set the last one to budget and all to budgets
+  const getBudgets = async () => {
     var results = await axios ({
       method: 'GET',
-      url: 'http://127.0.01:8000/api/budgets/' + 1 + '/',
+      url: 'http://127.0.01:8000/api/budgets/',
     });
     console.log(`budget: ${results.data}`);
-    setBudget(results.data);
+    if (results.data.length === 0) {
+      setBudget({
+        total_sales: 0,
+        total_expenses: 0,
+        total_profit: 0
+      })
+    } else {
+      setBudget(results.data[results.data.length-1])
+    }
+    setBudgets(results.data);
   }
 
   const logout = () => {
@@ -176,7 +186,6 @@ function App() {
             ((!user.is_staff) ?
               <CustomerPage 
                 user={user} 
-                decodedToken={decodedToken} 
                 products={products}
                 productInfo={productInfo}
                 shoppingCart={shoppingCart}
@@ -191,7 +200,8 @@ function App() {
               :
               <AdminPage
                 budget={budget}
-                getBudget={getBudget}
+                budgets={budgets}
+                getBudgets={getBudgets}
                 renderToggle={renderToggle} 
               />
             ) 

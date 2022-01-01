@@ -6,7 +6,7 @@ import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import './Login.css';
 
 const Login = (props) => {
-    const [userName, setUserName] = useState('')
+    const [employeeId, setEmployeeId] = useState('')
     const [userPassword, setUserPassword] = useState('')
     const navigate = useNavigate()
 
@@ -17,11 +17,11 @@ const Login = (props) => {
                 method: 'POST',
                 url: "http://127.0.0.1:8000/api/auth/login/",
                 data: { 
-                    username: userName,
+                    employee_id: employeeId,
                     password: userPassword
                 },
             })
-            setUserName('');
+            setEmployeeId('');
             setUserPassword('');
             localStorage.setItem('token', results.data.access);
             console.log(results)
@@ -56,9 +56,9 @@ const Login = (props) => {
                             </div>
                             <br/>
                             <Form className="Login" onSubmit={handleSubmit}>
-                                <Form.Group controlId="username">
-                                <Form.Label>User Name</Form.Label>
-                                    <Form.Control onChange={e => setUserName(e.target.value)} placeholder="" type="text" required />
+                                <Form.Group controlId="employee_id">
+                                <Form.Label>Employee Id</Form.Label>
+                                    <Form.Control onChange={e => setEmployeeId(e.target.value)} placeholder="" type="text" required />
                                 </Form.Group>   
                                 <Form.Group controlId="password">
                                 <Form.Label>Password</Form.Label>

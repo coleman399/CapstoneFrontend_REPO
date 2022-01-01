@@ -35,7 +35,7 @@ const CustomerPage = (props) => {
                 method: 'PUT',
                 url: 'http://127.0.01:8000/api/shoppingcarts/' + shoppingCart.id + '/',
                 data: {
-                    user: `${dced_user.user_id}`,
+                    user: `${dced_user.employee_id}`,
                     product: `${shoppingCart.product}`,
                     quantity: shoppingCart.quantity + 1,
                 }
@@ -48,7 +48,7 @@ const CustomerPage = (props) => {
                 method: 'POST',
                 url: 'http://127.0.01:8000/api/shoppingcarts/',
                 data: {
-                    user: `${dced_user.user_id}`,
+                    user: `${dced_user.employee_id}`,
                     product: `${product.id}`,
                     quantity: 1,
                 }
