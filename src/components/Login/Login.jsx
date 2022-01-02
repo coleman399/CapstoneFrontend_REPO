@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Stack, Col, Row, Image } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Form, Button, Container, Col, Row, Image } from 'react-bootstrap';
 import axios from 'axios';
 import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import './Login.css';
@@ -8,7 +7,6 @@ import './Login.css';
 const Login = (props) => {
     const [employeeId, setEmployeeId] = useState('')
     const [userPassword, setUserPassword] = useState('')
-    const navigate = useNavigate()
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -37,10 +35,6 @@ const Login = (props) => {
             document.forms[0].reset();
         }}
     }
-    
-    function handleOnClick(){
-        navigate("/register")
-    }
 
     return ( 
         <div className="login-background">
@@ -65,11 +59,9 @@ const Login = (props) => {
                                     <Form.Control onChange={e => setUserPassword(e.target.value)} placeholder="" type="password" required />
                                 </Form.Group>
                                 <br/>
-                                <Stack direction="horizontal" gap={5}>
-                                    <Button onClick={()=>handleOnClick()}>Register</Button>
-                                    <div className="vr" />
+                                <div className="text-center">
                                     <Button type="submit">Submit</Button>
-                                </Stack>
+                                </div>
                             </Form>
                         </div>
                     </Col>

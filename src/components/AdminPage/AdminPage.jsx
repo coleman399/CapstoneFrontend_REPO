@@ -4,19 +4,43 @@ import LineChart from '../charts/LineChart/LineChart'
 import PieChart from '../charts/PieChart/PieChart'
 import RegisterEmployee from '../RegisterEmployee/RegisterEmployee';
 import RegisterProduct from '../RegisterProduct/RegisterProduct';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button, Navbar, Stack } from 'react-bootstrap';
+import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 
 
 const AdminPage = (props) => {
 
     return (
         <div>
+            <Navbar className="admin-navbar-logo-nav">
+                <Container fluid>
+                    <Navbar.Brand>
+                        <Stack className="nav-logo" direction="horizontal" gap={3}>
+                            <img
+                                src={ShopLogo}
+                                width="50"
+                                height="50"
+                                className="d-inline-block align top"
+                                alt="ShopLogo"
+                            />
+                            <div className="vr" />
+                            <p className="company-name">Aisles</p>
+                            <p className="company-description">Food and Drug</p>
+                        </Stack>
+                    </Navbar.Brand>
+                    <div className="text-end">
+                        <Stack direction="horizontal" gap={3}>
+                            <div>{`Welcome Admin`}</div>
+                            <div className="vr"/>
+                            <Button onClick={()=>props.logout()}>Logout</Button>
+                        </Stack>
+                    </div>
+                </Container>
+            </Navbar>
             <div>
                 <Row>
 
                 </Row>
-                <br/>
-                <br/>
                 <br/>
                 <Row>
                     <Col xs lg="8">
@@ -46,15 +70,22 @@ const AdminPage = (props) => {
                 <Row>
                     <Col >
                         <div>
-                            <RegisterProduct />
+                            <RegisterProduct 
+                                products={props.products}
+                            />
                         </div>
                     </Col>
+                    <br/>
                     <Col>
                         <div>
-                            <RegisterEmployee />
+                            <RegisterEmployee 
+                                users={props.users}
+                            />
                         </div>
                     </Col>
                 </Row>
+                <br/>
+                <br/>
             </div>
         </div>
     )

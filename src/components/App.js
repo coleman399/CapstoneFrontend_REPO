@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Login from './Login/Login';
-import Register from './RegisterEmployee/RegisterEmployee';
 import AdminPage from './AdminPage/AdminPage';
 import PageNotFound from './PageNotFound/PageNotFound';
 import CustomerPage from './CustomerPage/CustomerPage';
@@ -12,10 +11,10 @@ import {
     Route,
 } from "react-router-dom";
 import jwtDecode from "jwt-decode";
-import { getDatasetAtEvent } from 'react-chartjs-2';
 
 function App() {
   const [user, setUser] = useState('');
+  const [users, setUsers] = useState({})
   const [products, setProducts] = useState([]);
   const [shoppingCart, setShoppingCart] = useState([]);
   const [productIdAndQuantity, setProductIdAndQuantity] = useState([]);
@@ -31,6 +30,7 @@ function App() {
   useEffect(() => {
     getToken();
     getBudgets();
+    getUsers();
   }, [toggle])
 
   const getToken = () => {
@@ -143,7 +143,6 @@ function App() {
     })
   }
 
-  //need to get all budgets and set the last one to budget and all to budgets
   const getBudgets = async () => {
     var results = await axios ({
       method: 'GET',
@@ -204,6 +203,17 @@ function App() {
     setTotalProfit(tempTotalProfit);
   }
 
+  const getUsers = async () => {
+    const jwt = localStorage.getItem('token');
+    var results = await axios ({
+      method: 'GET',
+      url: 'http://127.0.01:8000/api/auth/',
+      headers: {Authorization: `Bearer ${jwt}`},
+    });
+    console.log(`users: ${results.data}`);
+    setUsers(results.data);
+  }
+
   const logout = () => {
     localStorage.clear();
     window.location.href = "/";
@@ -231,38 +241,38 @@ function App() {
             ((!user.is_staff) ?
               <CustomerPage 
                 user={user} 
+                counter={counter}
                 products={products}
                 productInfo={productInfo}
                 shoppingCart={shoppingCart}
                 productIdAndQuantity={productIdAndQuantity}
-                counter={counter}
-                renderToggle={renderToggle}
-                getShoppingCart={getShoppingCart}
-                getProductInfo={getProductInfo}
                 logout={logout}
                 formatNumber={formatNumber}
+                renderToggle={renderToggle}
+                getProductInfo={getProductInfo}
+                getShoppingCart={getShoppingCart}
               /> 
               :
               <AdminPage
+                users={users}
                 budget={budget}
                 budgets={budgets}
+                products={products}
                 totalSales={totalSales}
                 totalExpenses={totalExpenses}
                 totalProfit={totalProfit}
+                logout={logout}
                 getBudgets={getBudgets}
                 renderToggle={renderToggle} 
               />
             ) 
           )
         }/>
-        <Route path="/register" element={
-          <Register />
-        }/>
         <Route path="/shopping-cart" element={
           <ShoppingCartPage 
+            budget={budget}
             productInfo={productInfo}
             shoppingCart={shoppingCart}
-            budget={budget}
             renderToggle={renderToggle}
             formatNumber={formatNumber}
           />
