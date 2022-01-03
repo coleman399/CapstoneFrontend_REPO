@@ -4,6 +4,7 @@ import AdminPage from './AdminPage/AdminPage';
 import PageNotFound from './PageNotFound/PageNotFound';
 import CustomerPage from './CustomerPage/CustomerPage';
 import ShoppingCartPage from './ShoppingCartPage/ShoppingCartPage';
+import UpdatePassword from './UpdatePassword/UpdatePassword';
 import axios from "axios";
 import {
     BrowserRouter as Router,
@@ -31,8 +32,6 @@ function App() {
   
   useEffect(() => {
     getToken();
-    getBudgets();
-    getUsers();
   }, [toggle])
 
   const getToken = () => {
@@ -143,6 +142,8 @@ function App() {
       console.log(`tempProductInfo: ${tempProductInfo}`);
       setProductInfo(tempProductInfo);
     })
+    getBudgets();
+    getUsers();
   }
 
   const getBudgets = async () => {
@@ -233,6 +234,10 @@ function App() {
       return formattedNumber;
   }
 
+  const truncate = (string) => {
+    return string.length > 8 ? string.substring(0, 7) + "..." : string;
+  }
+
   return (
     <Router>
       <Routes>
@@ -240,9 +245,10 @@ function App() {
           ((!user)? 
             <Login 
               employeeId={employeeId}
-              setEmployeeId={setEmployeeId}
               userPassword={userPassword}
+              setEmployeeId={setEmployeeId}
               setUserPassword={setUserPassword}
+              login={login}
             /> 
             : 
             ((!user.is_staff) ?
@@ -270,7 +276,9 @@ function App() {
                 totalProfit={totalProfit}
                 logout={logout}
                 getBudgets={getBudgets}
-                renderToggle={renderToggle} 
+                renderToggle={renderToggle}
+                formatNumber={formatNumber}
+                truncate={truncate} 
               />
             ) 
           )
@@ -284,6 +292,13 @@ function App() {
             userPassword={userPassword}
             renderToggle={renderToggle}
             formatNumber={formatNumber}
+          />
+        }/>
+        <Route path="/update-password" element={
+          <UpdatePassword
+            user={user} 
+            userPassword={userPassword}
+            setUserPassword={setUserPassword}
           />
         }/>
         <Route path="*" element={

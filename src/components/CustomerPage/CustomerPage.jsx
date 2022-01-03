@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Spinner, Container, Navbar, Stack, Carousel, Card, Button, InputGroup, FormControl, OverlayTrigger, Popover } from 'react-bootstrap';
+import { Col, Spinner, Container, Navbar, Stack, Carousel, Card, Button, InputGroup, FormControl, OverlayTrigger, Popover } from 'react-bootstrap';
 import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import EmployeeOne from '../assets/Employee1_Preview.png';
 import EmployeeTwo from '../assets/Employee2_Preview.png';
@@ -234,9 +234,11 @@ const CustomerPage = (props) => {
                                 )
                             })
                         :
-                            <Spinner animation="border" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                            </Spinner>
+                            <div className="text-center">
+                                <Spinner animation="border" role="status">
+                                <span className="visually-hidden">Loading...</span>
+                                </Spinner>
+                            </div>
                         }
                     </div>
                     <br/>

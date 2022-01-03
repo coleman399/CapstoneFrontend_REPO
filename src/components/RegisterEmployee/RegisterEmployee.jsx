@@ -7,7 +7,7 @@ const RegisterEmployee = (props) => {
   const [firstname, setFirstName] = useState()
   const [lastname, setLastName] = useState()
   const [employeeId, setEmployeeId] = useState()
-  const [password, setPassword] = useState()
+  const [password, setPassword] = useState("tempPassword1")
   const [salary, setSalary] = useState()
   const [email, setEmail] = useState()
   const [isAdmin, setIsAdmin] = useState(false)
@@ -60,18 +60,24 @@ const RegisterEmployee = (props) => {
             console.log(`budget: ${response.data}`);
         })
         alert("🎉 Employee Registered! 🎉")           
-        window.location.reload();
+        let form = document.getElementById('register-employee-form');
+        form.reset()
+        props.renderToggle();  
       } catch (e) {
         if (e.response.status === 401) {
           alert("Unauthorized access. Please try again.")
-          window.location.reload();
+          let form = document.getElementById('register-employee-form');
+          form.reset()  
         } else if (e.response.status === 400) {
           let newMessage = JSON.stringify(e.response.data)
           alert("😱\n" + " " + newMessage)
+          let form = document.getElementById('register-employee-form');
+          form.reset()  
         } else {
           console.log(e)
           alert("Oops... Something went wrong. 😥")
-          window.location.reload();
+          let form = document.getElementById('register-employee-form');
+          form.reset()  
         }
       }
     } else {
@@ -155,51 +161,97 @@ const RegisterEmployee = (props) => {
   return ( 
     <div>
       <Container>
-        <Row>
-          <Col>
-            <div className="p-5 border rounded bg-white">
-              <h4 className="text-center">Register Employee</h4>
-              <br/>
-              <Form className="register-employee-form" id="register-employee-form" onSubmit={handleSubmit}>
-                  <Form.Group controlId="employeeId">
-                    <Form.Label>Employee Id</Form.Label>
-                      <Form.Control onChange={e => setEmployeeId(e.target.value)} type="text" required />
-                  </Form.Group>
-                  <Form.Group controlId="password">
-                    <Form.Label>Temp Password</Form.Label>
-                      {/*  change setPassword to tempPassword1 and disable input*/}
-                      <Form.Control onChange={e => setPassword(e.target.value)} type="password" required />
-                  </Form.Group>  
-                  <Form.Group controlId="email">
-                    <Form.Label>Email</Form.Label>
-                      <Form.Control onChange={e => setEmail(e.target.value)} type="email" required />
-                  </Form.Group>
-                  <Form.Group controlId="firstname">
-                    <Form.Label>First Name</Form.Label>
-                      <Form.Control onChange={e => setFirstName(e.target.value)} type="text" required />
-                  </Form.Group>
-                  <Form.Group controlId="lastname">
-                    <Form.Label>Last Name</Form.Label>
-                      <Form.Control onChange={e => setLastName(e.target.value)} type="text" required />
-                  </Form.Group>
-                  <Form.Group controlId="salary">
-                    <Form.Label>Salary</Form.Label>
-                      <Form.Control onChange={e => setSalary(e.target.value)} type="text" required />
-                  </Form.Group>
-                  <Form.Group controlId="isAdmin">
-                    <Form.Check type="switch" label="Admin" as="input" onChange={e => setIsAdmin(!isAdmin)}/>
-                  </Form.Group>
-                  <Form.Group controlId="UpdateEmployee">
-                    <Form.Check type="switch" label="Update" as="input" onChange={e => setUpdate(!update)}/>
-                  </Form.Group>
-                  <br/>
-                  <div className="text-center">
-                    <Button type="submit">Submit</Button>
-                  </div>
-              </Form>
-            </div>
-          </Col>
-        </Row>
+        {props.editEmployee === true ?
+          <Row>
+            <Col>
+              <div className="p-5 border rounded bg-white">
+                <h4 className="text-center">Register Employee</h4>
+                <br/>
+                <Form className="register-employee-form" id="register-employee-form" onSubmit={handleSubmit}>
+                    <Form.Group controlId="employeeId">
+                      <Form.Label>Employee Id</Form.Label>
+                        <Form.Control onChange={e => setEmployeeId(e.target.value)} placeholder={props.editThisEmployee.employee_id} type="text" required />
+                    </Form.Group>
+                    <Form.Group controlId="password">
+                      <Form.Label>Temp Password</Form.Label>
+                        <Form.Control type="text" placeholder="tempPassword1" disabled/>
+                    </Form.Group>  
+                    <Form.Group controlId="email">
+                      <Form.Label>Email</Form.Label>
+                        <Form.Control onChange={e => setEmail(e.target.value)} placeholder={props.editThisEmployee.email} type="email" required />
+                    </Form.Group>
+                    <Form.Group controlId="firstname">
+                      <Form.Label>First Name</Form.Label>
+                        <Form.Control onChange={e => setFirstName(e.target.value)} placeholder={props.editThisEmployee.first_name} type="text" required />
+                    </Form.Group>
+                    <Form.Group controlId="lastname">
+                      <Form.Label>Last Name</Form.Label>
+                        <Form.Control onChange={e => setLastName(e.target.value)} placeholder={props.editThisEmployee.last_name} type="text" required />
+                    </Form.Group>
+                    <Form.Group controlId="salary">
+                      <Form.Label>Salary</Form.Label>
+                        <Form.Control onChange={e => setSalary(e.target.value)} placeholder={props.editThisEmployee.salary}type="text" required />
+                    </Form.Group>
+                    <Form.Group controlId="isAdmin">
+                        <Form.Check type="switch" label="Admin" as="input" onChange={e => props.setIsAdmin(!isAdmin)} checked={props.editThisEmployee.is_staff}/>  
+                    </Form.Group>
+                    <Form.Group controlId="UpdateEmployee">
+                      <Form.Check type="switch" label="Update" as="input" onChange={e => props.setEditEmployee(!props.editEmployee)} checked={props.editEmployee}/>
+                    </Form.Group>
+                    <br/>
+                    <div className="text-center">
+                      <Button type="submit">Submit</Button>
+                    </div>
+                </Form>
+              </div>
+            </Col>
+          </Row>
+        :
+          <Row>
+            <Col>
+              <div className="p-5 border rounded bg-white">
+                <h4 className="text-center">Register Employee</h4>
+                <br/>
+                <Form className="register-employee-form" id="register-employee-form" onSubmit={handleSubmit}>
+                    <Form.Group controlId="employeeId">
+                      <Form.Label>Employee Id</Form.Label>
+                        <Form.Control onChange={e => setEmployeeId(e.target.value)} type="text" required />
+                    </Form.Group>
+                    <Form.Group controlId="password">
+                      <Form.Label>Temp Password</Form.Label>
+                        <Form.Control type="text" placeholder="tempPassword1" disabled/>
+                    </Form.Group>  
+                    <Form.Group controlId="email">
+                      <Form.Label>Email</Form.Label>
+                        <Form.Control onChange={e => setEmail(e.target.value)} type="email" required />
+                    </Form.Group>
+                    <Form.Group controlId="firstname">
+                      <Form.Label>First Name</Form.Label>
+                        <Form.Control onChange={e => setFirstName(e.target.value)} type="text" required />
+                    </Form.Group>
+                    <Form.Group controlId="lastname">
+                      <Form.Label>Last Name</Form.Label>
+                        <Form.Control onChange={e => setLastName(e.target.value)} type="text" required />
+                    </Form.Group>
+                    <Form.Group controlId="salary">
+                      <Form.Label>Salary</Form.Label>
+                        <Form.Control onChange={e => setSalary(e.target.value)} type="text" required />
+                    </Form.Group>
+                    <Form.Group controlId="isAdmin">
+                      <Form.Check type="switch" label="Admin" as="input" onChange={e => setIsAdmin(!isAdmin)}/>
+                    </Form.Group>
+                    <Form.Group controlId="UpdateEmployee">
+                      <Form.Check type="switch" label="Update" as="input" onChange={e => setUpdate(!update)}/>
+                    </Form.Group>
+                    <br/>
+                    <div className="text-center">
+                      <Button type="submit">Submit</Button>
+                    </div>
+                </Form>
+              </div>
+            </Col>
+          </Row>
+        }
       </Container>
     </div>
   );

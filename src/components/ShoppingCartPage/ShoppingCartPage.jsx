@@ -82,8 +82,7 @@ const ShoppingCartPage = (props) => {
         let total_price = (price).toFixed(2);
         let cost = parseFloat(totalCost) + parseFloat(props.budget.total_expenses);
         let total_cost = (cost).toFixed(2);
-        let saleProfit = total_price - total_cost;
-        let profit = parseFloat(saleProfit) + parseFloat(props.budget.total_profit);
+        let profit = total_price - total_cost;
         let total_profit = profit.toFixed(2);
         let employeeSpent = parseFloat(totalPrice) + parseFloat(props.user.spent)
         await axios ({
