@@ -69,7 +69,6 @@ const UpdatePassword = (props) => {
                     alert("🎉 Password Updated! 🎉")
                     let form = document.getElementById("update-password-form");
                     form.reset()
-                    navigate("/"); 
                     window.location.href = "/"; 
                 });
             } catch (e) {
@@ -112,11 +111,11 @@ const UpdatePassword = (props) => {
                                 </p>
                             </div>
                             <Form className="update-password-form" id="update-password-form" onSubmit={handleSubmit}>
-                                <Form.Group controlId="employee_id">
+                                <Form.Group controlId="password">
                                 <Form.Label>Password</Form.Label>
                                     <Form.Control onChange={e => setTempPassword(e.target.value)} placeholder="" type="password" required />
                                 </Form.Group>   
-                                <Form.Group controlId="password">
+                                <Form.Group controlId="confirm-password">
                                 <Form.Label>Confirm Password</Form.Label>
                                     <Form.Control onChange={e => props.setUserPassword(e.target.value)} placeholder="" type="password" required />
                                 </Form.Group>

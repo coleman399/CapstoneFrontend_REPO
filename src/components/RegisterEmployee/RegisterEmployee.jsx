@@ -11,7 +11,7 @@ const RegisterEmployee = (props) => {
   const [salary, setSalary] = useState()
   const [email, setEmail] = useState()
   const [isAdmin, setIsAdmin] = useState(false)
-  const [update, setUpdate] = useState(false)
+  const [update, setUpdate] = useState(props.editEmployee)
   let tempUser = {
       employeeId: employeeId,
       password: password,

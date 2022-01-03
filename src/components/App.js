@@ -222,6 +222,8 @@ function App() {
     window.location.href = "/";
   }
 
+  
+
   const renderToggle = () => {
     setToggle(!toggle);     
   }
@@ -292,6 +294,7 @@ function App() {
             userPassword={userPassword}
             renderToggle={renderToggle}
             formatNumber={formatNumber}
+            setUserPassword={setUserPassword}
           />
         }/>
         <Route path="/update-password" element={

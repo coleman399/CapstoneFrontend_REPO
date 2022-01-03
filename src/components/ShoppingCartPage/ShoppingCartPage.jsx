@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Container, Navbar, Stack, Card, Button } from 'react-bootstrap';
+import { Form, Modal, Container, Navbar, Stack, Card, Button } from 'react-bootstrap';
 import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import jwtDecode from "jwt-decode";
 import axios from "axios";
@@ -10,6 +10,7 @@ import './ShoppingCartPage.css';
 const ShoppingCartPage = (props) => {
     const [show, setShow] = useState(false);
     const [showThankYou, setShowThankYou] = useState(false);
+    const [tempPassword, setTempPassword] = useState('');
     let navigate = useNavigate();
     let totalPrice = 0.00;
     let totalCost= 0.00;
@@ -73,55 +74,97 @@ const ShoppingCartPage = (props) => {
         })
     }
 
-    //need to get the last budget and use that as the budget data
-    //also need to subtract the total_price from employee salary
-    const completePurchase = async () => {
+    const completePurchase = async (event) => {
+        event.preventDefault(); 
         const jwt = localStorage.getItem('token');
         const dced_user = jwtDecode(jwt);
-        let price = parseFloat(totalPrice) + parseFloat(props.budget.total_sales);
-        let total_price = (price).toFixed(2);
-        let cost = parseFloat(totalCost) + parseFloat(props.budget.total_expenses);
-        let total_cost = (cost).toFixed(2);
-        let profit = total_price - total_cost;
-        let total_profit = profit.toFixed(2);
-        let employeeSpent = parseFloat(totalPrice) + parseFloat(props.user.spent)
-        await axios ({
-            method: 'POST',
-            url: 'http://127.0.01:8000/api/budgets/',
-            data: {
-                total_sales: total_price,
-                total_expenses: total_cost,
-                total_profit: total_profit
+        if (tempPassword === props.user.userPassword){
+            try {
+                let prev_id = dced_user.employee_id
+                let price = parseFloat(totalPrice) + parseFloat(props.budget.total_sales);
+                let total_price = (price).toFixed(2);
+                let cost = parseFloat(totalCost) + parseFloat(props.budget.total_expenses);
+                let total_cost = (cost).toFixed(2);
+                let profit = total_price - total_cost;
+                let total_profit = profit.toFixed(2);
+                let employeeSpent = parseFloat(totalPrice) + parseFloat(props.user.spent)
+                let tempUser = {
+                    employee_id: props.user.employee_id,
+                    password: tempPassword,
+                    email: props.user.email,
+                    first_name: props.user.first_name,
+                    last_name: props.user.last_name,
+                    is_staff: props.user.is_staff,
+                    salary: props.user.salary,
+                    spent: employeeSpent,
+                    userPassword: props.user.userPassword,
+                }
+                await axios ({
+                    method: "DELETE",
+                    url: 'http://127.0.0.1:8000/api/auth/' + prev_id + "/",
+                    headers: {Authorization: `Bearer ${jwt}`},
+                }).then(response => {
+                        console.log(response.data)
+                })          
+                await axios ({
+                    method: 'POST',
+                    url: 'http://127.0.01:8000/api/auth/register/',
+                    data: {
+                        employee_id: tempUser.employee_id,
+                        password: tempUser.password,
+                        email: tempUser.email,
+                        first_name: tempUser.first_name,
+                        last_name: tempUser.last_name,
+                        is_staff: tempUser.is_staff,
+                        salary: tempUser.salary,
+                        spent: tempUser.spent,
+                        userPassword: tempUser.userPassword,
+                    }
+                }).then((response) => {
+                    console.log(`employee updated: ${response.data}`);
+                });
+                props.shoppingCart.forEach(async sc => {
+                    await axios ({
+                        method: 'DELETE',
+                        url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
+                    })
+                });
+                await axios ({
+                    method: "POST",
+                    url: 'http://127.0.01:8000/api/budgets/',
+                    data: {
+                        total_sales: total_price,
+                        total_expenses: total_cost,
+                        total_profit: total_profit,
+                    }
+                }).then((post_response)=>{
+                    console.log(`budget: ${post_response.data}`);
+                })
+                props.renderToggle();         
+                handleHide();
+                handleThankYou();
+            } catch (e) {
+                if (e.response.status === 401) {
+                    alert("Unauthorized access. Please try again.")
+                    let form = document.getElementById('complete-purchase-form');
+                    form.reset() 
+                } else if (e.response.status === 400) {
+                    let newMessage = JSON.stringify(e.response.data)
+                    alert("😱\n" + " " + newMessage)
+                    let form = document.getElementById('complete-purchase-form');
+                    form.reset()       
+                } else {
+                    console.log(e)
+                    alert("Oops... Something went wrong. 😥")
+                    let form = document.getElementById('complete-purchase-form');
+                    form.reset() 
+                }
             }
-        }).then((response)=>{
-            console.log(`budget: ${response.data}`);
-        })
-        props.shoppingCart.forEach(async sc => {
-            await axios ({
-                method: 'DELETE',
-                url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
-            })
-        })
-        await axios ({
-            method: 'PUT',
-            url: 'http://127.0.01:8000/api/auth/' + dced_user.employee_id + "/",
-            headers: {Authorization: `Bearer ${jwt}`},
-            data: {
-                employee_id: props.user.employee_id,
-                password: props.user.userPassword,
-                email: props.user.email,
-                first_name: props.user.first_name,
-                last_name: props.user.last_name,
-                is_staff: props.user.is_staff,
-                salary: props.user.salary,
-                spent: employeeSpent,
-            }
-        }).then((response)=>{
-            console.log(`employee updated: ${response.data}`);
-        })
-        props.renderToggle();
-        handleHide();
-        handleThankYou();
+        } else {
+            alert("😱 The Password You Enter Is Incorrect. Please try again.")
+            let form = document.getElementById('complete-purchase-form');
+            form.reset() 
+        }
     }
 
     const getTotals = () => {
@@ -141,16 +184,15 @@ const ShoppingCartPage = (props) => {
     }
 
     const handleThankYou = () => {
-        setShowThankYou(true)
+        setShowThankYou(true);
     }
 
     const goBack = () => {
-        navigate("/");
+        window.location.href = "/"; 
     }
 
     const goToCustomerPage = () => {
-        window.location.reload();
-        window.location.href = "/";
+        navigate("/");
     }
 
     return (
@@ -215,17 +257,26 @@ const ShoppingCartPage = (props) => {
                             })}
                             <Modal show={show} onHide={()=>handleHide()}>
                                 <Modal.Body>
+                                    <br/>
+                                    <h5>This is where we would collect payment information.</h5>
+                                    <br />
                                     {`Total: ${props.formatNumber(totalPrice)}`}
                                     <div>Complete Purchase?</div>
-                                    <div>This is where we would collect payment information.</div>
+                                    <br/>
+                                    <Form className="complete-purchase-form" id="complete-purchase-form" onSubmit={completePurchase}>
+                                        <Form.Group controlId="password">
+                                        <Form.Label>Password</Form.Label>
+                                            <Form.Control onChange={e => setTempPassword(e.target.value)} placeholder="" type="password" required />
+                                        </Form.Group>   
+                                        <Modal.Footer>
+                                            <Stack direction="horizontal" gap={3}>
+                                                <Button type="submit">Yes</Button>
+                                                <div className="vr"/>
+                                                <Button onClick={()=>handleHide()}>Cancel</Button>
+                                            </Stack>
+                                        </Modal.Footer>
+                                    </Form>
                                 </Modal.Body>
-                                <Modal.Footer>
-                                    <Stack direction="horizontal" gap={3}>
-                                        <Button onClick={()=>completePurchase()}>Yes</Button>
-                                        <div className="vr"/>
-                                        <Button onClick={()=>handleHide()}>Cancel</Button>
-                                    </Stack>
-                                </Modal.Footer>
                             </Modal>
                         </div>                           
                     :
