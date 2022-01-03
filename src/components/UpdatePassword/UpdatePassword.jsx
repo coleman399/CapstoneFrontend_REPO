@@ -4,11 +4,9 @@ import axios from 'axios';
 import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import './UpdatePassword.css';
 import jwtDecode from "jwt-decode";
-import { useNavigate } from 'react-router';
 
 const UpdatePassword = (props) => {
     const [tempPassword, setTempPassword] = useState('');
-    let navigate = useNavigate()
 
     const goToLogin = () => {
         window.location.href = "/"; 

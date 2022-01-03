@@ -222,7 +222,7 @@ function App() {
     window.location.href = "/";
   }
 
-  
+
 
   const renderToggle = () => {
     setToggle(!toggle);     
@@ -292,6 +292,7 @@ function App() {
             productInfo={productInfo}
             shoppingCart={shoppingCart}
             userPassword={userPassword}
+            getToken={getToken}
             renderToggle={renderToggle}
             formatNumber={formatNumber}
             setUserPassword={setUserPassword}

@@ -76,8 +76,8 @@ const ShoppingCartPage = (props) => {
 
     const completePurchase = async (event) => {
         event.preventDefault(); 
-        const jwt = localStorage.getItem('token');
-        const dced_user = jwtDecode(jwt);
+        let jwt = localStorage.getItem('token');
+        let dced_user = jwtDecode(jwt);
         if (tempPassword === props.user.userPassword){
             try {
                 let prev_id = dced_user.employee_id
@@ -99,6 +99,12 @@ const ShoppingCartPage = (props) => {
                     spent: employeeSpent,
                     userPassword: props.user.userPassword,
                 }
+                props.shoppingCart.forEach(async sc => {
+                    await axios ({
+                        method: 'DELETE',
+                        url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
+                    })
+                });
                 await axios ({
                     method: "DELETE",
                     url: 'http://127.0.0.1:8000/api/auth/' + prev_id + "/",
@@ -106,6 +112,17 @@ const ShoppingCartPage = (props) => {
                 }).then(response => {
                         console.log(response.data)
                 })          
+                await axios ({
+                    method: "POST",
+                    url: 'http://127.0.01:8000/api/budgets/',
+                    data: {
+                        total_sales: total_price,
+                        total_expenses: total_cost,
+                        total_profit: total_profit,
+                    }
+                }).then((post_response)=>{
+                    console.log(`budget: ${post_response.data}`);
+                })
                 await axios ({
                     method: 'POST',
                     url: 'http://127.0.01:8000/api/auth/register/',
@@ -123,24 +140,18 @@ const ShoppingCartPage = (props) => {
                 }).then((response) => {
                     console.log(`employee updated: ${response.data}`);
                 });
-                props.shoppingCart.forEach(async sc => {
-                    await axios ({
-                        method: 'DELETE',
-                        url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
-                    })
-                });
-                await axios ({
-                    method: "POST",
-                    url: 'http://127.0.01:8000/api/budgets/',
-                    data: {
-                        total_sales: total_price,
-                        total_expenses: total_cost,
-                        total_profit: total_profit,
+                await axios({
+                    method: 'POST',
+                    url: "http://127.0.0.1:8000/api/auth/login/",
+                    data: { 
+                        employee_id: tempUser.employee_id,
+                        password: tempUser.userPassword
                     }
-                }).then((post_response)=>{
-                    console.log(`budget: ${post_response.data}`);
+                }).then(response => {
+                    localStorage.setItem('token', response.data.access);
+                    console.log(response.data) 
                 })
-                props.renderToggle();         
+                props.renderToggle();
                 handleHide();
                 handleThankYou();
             } catch (e) {
