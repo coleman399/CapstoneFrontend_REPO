@@ -15,6 +15,8 @@ import jwtDecode from "jwt-decode";
 function App() {
   const [user, setUser] = useState('');
   const [users, setUsers] = useState({})
+  const [employeeId, setEmployeeId] = useState('')
+  const [userPassword, setUserPassword] = useState('')
   const [products, setProducts] = useState([]);
   const [shoppingCart, setShoppingCart] = useState([]);
   const [productIdAndQuantity, setProductIdAndQuantity] = useState([]);
@@ -236,7 +238,12 @@ function App() {
       <Routes>
         <Route exact path="/" element={
           ((!user)? 
-            <Login /> 
+            <Login 
+              employeeId={employeeId}
+              setEmployeeId={setEmployeeId}
+              userPassword={userPassword}
+              setUserPassword={setUserPassword}
+            /> 
             : 
             ((!user.is_staff) ?
               <CustomerPage 
@@ -270,9 +277,11 @@ function App() {
         }/>
         <Route path="/shopping-cart" element={
           <ShoppingCartPage 
+            user={user}
             budget={budget}
             productInfo={productInfo}
             shoppingCart={shoppingCart}
+            userPassword={userPassword}
             renderToggle={renderToggle}
             formatNumber={formatNumber}
           />

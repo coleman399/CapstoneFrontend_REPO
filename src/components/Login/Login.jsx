@@ -1,38 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form, Button, Container, Col, Row, Image } from 'react-bootstrap';
 import axios from 'axios';
 import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import './Login.css';
 
 const Login = (props) => {
-    const [employeeId, setEmployeeId] = useState('')
-    const [userPassword, setUserPassword] = useState('')
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        // add if password = temptPassword1 update employee password
         try {
             let results = await axios({
                 method: 'POST',
                 url: "http://127.0.0.1:8000/api/auth/login/",
                 data: { 
-                    employee_id: employeeId,
-                    password: userPassword
+                    employee_id: props.employeeId,
+                    password: props.userPassword
                 },
             })
-            setEmployeeId('');
-            setUserPassword('');
             localStorage.setItem('token', results.data.access);
             console.log(results)
+            
             window.location.href = "/";
         } catch (e) {
         if (e.response.status === 401) {
             alert("Unauthorized access. Please try again.")
-            document.forms[0].reset();
-
         } else {
             console.log(e)
             alert("Oops... Something went wrong. 😥")
-            document.forms[0].reset();
         }}
     }
 
@@ -52,11 +47,11 @@ const Login = (props) => {
                             <Form className="Login" onSubmit={handleSubmit}>
                                 <Form.Group controlId="employee_id">
                                 <Form.Label>Employee Id</Form.Label>
-                                    <Form.Control onChange={e => setEmployeeId(e.target.value)} placeholder="" type="text" required />
+                                    <Form.Control onChange={e => props.setEmployeeId(e.target.value)} placeholder="" type="text" required />
                                 </Form.Group>   
                                 <Form.Group controlId="password">
                                 <Form.Label>Password</Form.Label>
-                                    <Form.Control onChange={e => setUserPassword(e.target.value)} placeholder="" type="password" required />
+                                    <Form.Control onChange={e => props.setUserPassword(e.target.value)} placeholder="" type="password" required />
                                 </Form.Group>
                                 <br/>
                                 <div className="text-center">

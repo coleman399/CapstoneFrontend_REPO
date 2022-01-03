@@ -27,6 +27,10 @@ const RegisterEmployee = (props) => {
     const jwt = localStorage.getItem('token');
     if (update === false) {
       try {
+        let cost = parseFloat(props.budget.total_expenses) + parseFloat(tempUser.salary);
+        let total_cost = (cost).toFixed(2);
+        let profit = parseFloat(props.budget.total_profit) - parseFloat(tempUser.salary);
+        let total_profit = profit.toFixed(2);
         await axios ({
           method: "POST",
           url: 'http://127.0.0.1:8000/api/auth/register/',
@@ -37,10 +41,24 @@ const RegisterEmployee = (props) => {
             first_name: tempUser.firstname,
             last_name: tempUser.lastname,
             is_staff: tempUser.is_staff,
-            salary: tempUser.salary
+            salary: tempUser.salary,
+            spent: 0.00,
+            userPassword: tempUser.password,
           },
-        });
-        console.log(tempUser);
+        }).then((response)=>{
+            console.log(`employee: ${response.data}`);
+        })
+        await axios ({
+          method: "POST",
+          url: 'http://127.0.01:8000/api/budgets/',
+            data: {
+                total_sales: props.budget.total_sales,
+                total_expenses: total_cost,
+                total_profit: total_profit,
+            }
+        }).then((response)=>{
+            console.log(`budget: ${response.data}`);
+        })
         alert("🎉 Employee Registered! 🎉")           
         window.location.reload();
       } catch (e) {
@@ -50,7 +68,6 @@ const RegisterEmployee = (props) => {
         } else if (e.response.status === 400) {
           let newMessage = JSON.stringify(e.response.data)
           alert("😱\n" + " " + newMessage)
-          window.location.reload();
         } else {
           console.log(e)
           alert("Oops... Something went wrong. 😥")
@@ -60,9 +77,13 @@ const RegisterEmployee = (props) => {
     } else {
       try {
         let id;
+        let post_salary;
+        let temp_spent;
         props.users.forEach(user => {
           if(user.employee_id === tempUser.employeeId) {
             id = user.id;
+            post_salary = user.salary;
+            temp_spent = user.spent;
           }
         })
         await axios ({
@@ -82,25 +103,50 @@ const RegisterEmployee = (props) => {
             first_name: tempUser.firstname,
             last_name: tempUser.lastname,
             is_staff: tempUser.is_staff,
-            salary: tempUser.salary
+            salary: tempUser.salary,
+            spent: temp_spent,
+            userPassword: tempUser.password,
           },
         }).then(response => {
           console.log(response.data)
         });
+        let prev_expenses = parseFloat(props.budget.total_expenses) - parseFloat(post_salary)
+        let expenses = (prev_expenses).toFixed(2);
+        let post_expenses = parseFloat(expenses) + parseFloat(tempUser.salary);
+        let total_cost = post_expenses.toFixed(2);
+        let prev_profit = parseFloat(props.budget.total_profit) + parseFloat(post_salary)
+        let profit = (prev_profit).toFixed(2);
+        let post_profit = parseFloat(profit) - parseFloat(tempUser.salary);
+        let total_profit = post_profit.toFixed(2);
+        await axios ({
+          method: "POST",
+          url: 'http://127.0.01:8000/api/budgets/',
+            data: {
+                total_sales: props.budget.total_sales,
+                total_expenses: total_cost,
+                total_profit: total_profit,
+            }
+        }).then((response)=>{
+            console.log(`budget: ${response.data}`);
+        })
         alert("🎉 Employee Updated! 🎉") 
-        window.location.reload();
+        let form = document.getElementById('register-employee-form');
+        form.reset()  
       } catch (e) {
         if (e.response.status === 401) {
           alert("Unauthorized access. Please try again.")
-          window.location.reload();
+          let form = document.getElementById('register-employee-form');
+          form.reset()  
         } else if (e.response.status === 400) {
           let newMessage = JSON.stringify(e.response.data)
           alert("😱\n" + " " + newMessage)
-          window.location.reload();
+          let form = document.getElementById('register-employee-form');
+          form.reset()  
         } else {
           console.log(e)
           alert("Oops... Something went wrong. 😥")
-          window.location.reload();
+          let form = document.getElementById('register-employee-form');
+          form.reset()  
         }
       }
     }
@@ -114,18 +160,19 @@ const RegisterEmployee = (props) => {
             <div className="p-5 border rounded bg-white">
               <h4 className="text-center">Register Employee</h4>
               <br/>
-              <Form className="Register" onSubmit={handleSubmit}>
+              <Form className="register-employee-form" id="register-employee-form" onSubmit={handleSubmit}>
                   <Form.Group controlId="employeeId">
                     <Form.Label>Employee Id</Form.Label>
                       <Form.Control onChange={e => setEmployeeId(e.target.value)} type="text" required />
                   </Form.Group>
                   <Form.Group controlId="password">
                     <Form.Label>Temp Password</Form.Label>
+                      {/*  change setPassword to tempPassword1 and disable input*/}
                       <Form.Control onChange={e => setPassword(e.target.value)} type="password" required />
+                  </Form.Group>  
                   <Form.Group controlId="email">
                     <Form.Label>Email</Form.Label>
                       <Form.Control onChange={e => setEmail(e.target.value)} type="email" required />
-                  </Form.Group>
                   </Form.Group>
                   <Form.Group controlId="firstname">
                     <Form.Label>First Name</Form.Label>

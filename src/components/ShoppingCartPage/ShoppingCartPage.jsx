@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Modal, Container, Navbar, Stack, Card, Button } from 'react-bootstrap';
 import ShopLogo from '../assets/ShopLogo171x180_Preview.png';
 import jwtDecode from "jwt-decode";
@@ -20,9 +20,7 @@ const ShoppingCartPage = (props) => {
                 await axios ({
                     method: 'DELETE',
                     url: 'http://127.0.01:8000/api/shoppingcarts/' + shoppingCartId + '/',                  
-                }).then((response)=> {
-                    console.log(`shopping-cart: ${shoppingCartId} has been deleted`)
-                })
+                });
             }
         })
     }
@@ -78,6 +76,8 @@ const ShoppingCartPage = (props) => {
     //need to get the last budget and use that as the budget data
     //also need to subtract the total_price from employee salary
     const completePurchase = async () => {
+        const jwt = localStorage.getItem('token');
+        const dced_user = jwtDecode(jwt);
         let price = parseFloat(totalPrice) + parseFloat(props.budget.total_sales);
         let total_price = (price).toFixed(2);
         let cost = parseFloat(totalCost) + parseFloat(props.budget.total_expenses);
@@ -85,6 +85,7 @@ const ShoppingCartPage = (props) => {
         let saleProfit = total_price - total_cost;
         let profit = parseFloat(saleProfit) + parseFloat(props.budget.total_profit);
         let total_profit = profit.toFixed(2);
+        let employeeSpent = parseFloat(totalPrice) + parseFloat(props.user.spent)
         await axios ({
             method: 'POST',
             url: 'http://127.0.01:8000/api/budgets/',
@@ -101,6 +102,23 @@ const ShoppingCartPage = (props) => {
                 method: 'DELETE',
                 url: 'http://127.0.01:8000/api/shoppingcarts/' + sc.id + '/',
             })
+        })
+        await axios ({
+            method: 'PUT',
+            url: 'http://127.0.01:8000/api/auth/' + dced_user.employee_id + "/",
+            headers: {Authorization: `Bearer ${jwt}`},
+            data: {
+                employee_id: props.user.employee_id,
+                password: props.user.userPassword,
+                email: props.user.email,
+                first_name: props.user.first_name,
+                last_name: props.user.last_name,
+                is_staff: props.user.is_staff,
+                salary: props.user.salary,
+                spent: employeeSpent,
+            }
+        }).then((response)=>{
+            console.log(`employee updated: ${response.data}`);
         })
         props.renderToggle();
         handleHide();
@@ -200,7 +218,7 @@ const ShoppingCartPage = (props) => {
                                 <Modal.Body>
                                     {`Total: ${props.formatNumber(totalPrice)}`}
                                     <div>Complete Purchase?</div>
-                                    <div>This is where we would collect payment information.</div> 
+                                    <div>This is where we would collect payment information.</div>
                                 </Modal.Body>
                                 <Modal.Footer>
                                     <Stack direction="horizontal" gap={3}>
