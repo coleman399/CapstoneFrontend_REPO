@@ -151,18 +151,28 @@ const AdminPage = (props) => {
                     <Col lg={11}>
                         <div className="border rounded bg-white text-center">
                             <br />
-                            <h5>
-                                Message Board
+                            <h5 >
+                                Welcome to the Aisles Admin Page 🧙
                             </h5>
+                            <Container>
+                                Here you can add or edit employees, their names, salaries, and more. 
+
+                                You can also add or edit products, their description, prices, aisle, and manufacturing cost. 
+
+                                This website is designed to cut labor costs by having employees purchase products from Aisles' "Nameless Parent Company". 
+
+                                On top of lowering labor costs the data extracted from Aisles can be used by "Nameless Parent Company" to target employees with ads based on purchase history, salary and interests.
+
+                                Future features include detailed employee records, targeted product sales, product statistics and more.
+                            </Container>
                             <br />
                             <Container>
-                                <p>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas a tempor sem, eu commodo nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum et dui egestas, ultrices velit eu, fermentum magna. Sed a neque ac magna porta posuere. Cras ultricies mi sed faucibus euismod. Interdum et malesuada fames ac ante ipsum primis in faucibus. Donec sodales fermentum augue ut fermentum. Sed ornare massa nunc, non tempor lorem cursus vitae. Sed volutpat, lorem a luctus elementum, metus massa congue est, eu condimentum dui sem quis mauris.
+                                <p>The line chart below updates finance data to the millisecond and the circle chart displays the most current update in detail.</p>
+                                <p>All amounts are in USD. All employee accounts created here are given a temp password, tempPassword1, which must be used to log in for the first time.</p>
+                                <p>After you are finished setting things up here, I suggest you log out as an Admin and log in as an Employee, purchase a few items, then return to review the changes in data.</p>
+                                
+                                Suggested starting setup: 1 employee with a salary of 10000 and 1 product with the sales price of 1000 and manufacturing cost of 0. Have fun!  
 
-                                    Curabitur vel bibendum nunc. Donec lacinia, turpis quis gravida tincidunt, mi arcu iaculis magna, sit amet interdum metus leo in ligula. Vestibulum non purus quis erat ultrices sodales quis ut odio. Etiam egestas auctor tempus. Suspendisse id sollicitudin leo, vel sollicitudin eros. Morbi semper eros at turpis luctus egestas. Cras sed massa felis.
-
-                                    Nam sodales nisi et massa vestibulum, at pulvinar ante fringilla. Pellentesque vel ipsum tellus. Vestibulum at massa sed risus tempus elementum ac nec enim. Integer ullamcorper blandit feugiat. Vestibulum ut efficitur nulla. Nam pretium arcu eget felis dictum, non vulputate lectus tristique. Mauris bibendum vestibulum metus, vitae cursus ipsum euismod nec. Aliquam lacus velit, dignissim sagittis felis id, elementum convallis ligula. Nam fermentum ligula venenatis sem facilisis, vel laoreet felis sollicitudin.
-                                </p>
                             </Container>
                             <br />
                         </div>
@@ -274,10 +284,14 @@ const AdminPage = (props) => {
                                         <ListGroup.Item as="li">Aisle</ListGroup.Item>
                                     </Col>
                                     <Col>
-                                        <ListGroup.Item as="li">Edit</ListGroup.Item>
+                                        <div className="text-center">
+                                            <ListGroup.Item as="li">Edit</ListGroup.Item>
+                                        </div>
                                     </Col>
                                     <Col>
-                                        <ListGroup.Item as="li">Delete</ListGroup.Item>
+                                        <div className="text-center">
+                                            <ListGroup.Item as="li">Delete</ListGroup.Item>
+                                        </div>
                                     </Col>
                                 </Stack>
                             </Container>
@@ -309,10 +323,14 @@ const AdminPage = (props) => {
                                                     <ListGroup.Item as="li">{product.aisleName}</ListGroup.Item>
                                                 </Col>
                                                 <Col>
-                                                    <ListGroup.Item as="li" variant="primary"action onClick={()=>editProductStatus(product)}>Edit</ListGroup.Item>
+                                                    <div className="text-center">
+                                                        <ListGroup.Item as="li" variant="primary"action onClick={()=>editProductStatus(product)}>Edit</ListGroup.Item>
+                                                    </div>
                                                 </Col>
                                                 <Col>
-                                                    <ListGroup.Item as="li" variant="danger" action onClick={()=>deleteProduct(product)}>Delete</ListGroup.Item>
+                                                    <div className="text-center">
+                                                        <ListGroup.Item as="li" variant="danger" action onClick={()=>deleteProduct(product)}>Delete</ListGroup.Item>
+                                                    </div>
                                                 </Col>
                                             </Stack>
                                         </Container>
@@ -344,13 +362,19 @@ const AdminPage = (props) => {
                                         <ListGroup.Item as="li">Spent</ListGroup.Item>
                                     </Col>
                                     <Col>
+                                        <div className="text-center">
                                         <ListGroup.Item as="li">Admin</ListGroup.Item>
+                                        </div>
                                     </Col>
                                     <Col>
+                                        <div className="text-center">
                                             <ListGroup.Item as="li">Edit</ListGroup.Item>
+                                        </div>
                                     </Col>
                                     <Col>
-                                        <ListGroup.Item as="li">Delete</ListGroup.Item>
+                                        <div className="text-center">
+                                            <ListGroup.Item as="li">Delete</ListGroup.Item>
+                                        </div>
                                     </Col>
                                 </Stack>
                             </Container>
@@ -375,17 +399,25 @@ const AdminPage = (props) => {
                                                     <ListGroup.Item as="li">{props.truncate(props.formatNumber(user.spent))}</ListGroup.Item>
                                                 </Col>
                                                 <Col>
-                                                    {user.is_staff === true ?  
-                                                        <ListGroup.Item as="li">✔️</ListGroup.Item>
+                                                    {user.is_staff === true ? 
+                                                        <div className="text-center"> 
+                                                            <ListGroup.Item as="li">✔️</ListGroup.Item>
+                                                        </div>
                                                     :
-                                                        <ListGroup.Item as="li">❌</ListGroup.Item>   
+                                                        <div className="text-center">
+                                                            <ListGroup.Item as="li">❌</ListGroup.Item>   
+                                                        </div>
                                                     }
                                                 </Col>
                                                 <Col>
-                                                    <ListGroup.Item as="li" variant="primary"action onClick={()=>editEmployeeStatus(user)}>Edit</ListGroup.Item>
+                                                    <div className="text-center">
+                                                        <ListGroup.Item as="li" variant="primary"action onClick={()=>editEmployeeStatus(user)}>Edit</ListGroup.Item>
+                                                    </div>
                                                 </Col>
                                                 <Col>
-                                                    <ListGroup.Item as="li" variant="danger" action onClick={()=>deleteEmployee(user)}>Delete</ListGroup.Item>
+                                                    <div className="text-center">
+                                                        <ListGroup.Item as="li" variant="danger" action onClick={()=>deleteEmployee(user)}>Delete</ListGroup.Item>
+                                                    </div>
                                                 </Col>
                                             </Stack>
                                         </Container>

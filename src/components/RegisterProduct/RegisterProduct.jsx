@@ -20,7 +20,8 @@ const RegisterProduct = (props) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (update === false) {
+        setUpdate(props.editProduct)
+        if (props.editProduct === false) {
             try{
                 await axios ({
                     method: "POST",
@@ -65,7 +66,8 @@ const RegisterProduct = (props) => {
                 })
                 if (id === undefined) {
                     alert("😞 Sorry, Product Not Found. Please try again!") 
-                    window.location.reload();
+                    let form = document.getElementById('register-product-form');
+                    form.reset()  
                 } else {
                     await axios ({
                     method: "PUT",
@@ -81,19 +83,26 @@ const RegisterProduct = (props) => {
                     console.log(response.data)
                     })
                     alert("🎉 Product Updated! 🎉") 
+                    props.setEditProduct(!props.editProduct);
+                    let form = document.getElementById('register-product-form');
+                    form.reset()  
                     props.renderToggle();
                 }
             } catch (e) {
                 if (e.response.status === 401) {
                 alert("Unauthorized access. Please try again.")
-                window.location.reload();
+                let form = document.getElementById('register-product-form');
+                form.reset()  
                 } else if (e.response.status === 400) {
                 let newMessage = JSON.stringify(e.response.data)
                 alert("😱\n" + " " + newMessage)
+                let form = document.getElementById('register-product-form');
+                form.reset()  
                 } else {
                 console.log(e)
                 alert("Oops... Something went wrong. 😥")
-                window.location.reload();
+                let form = document.getElementById('register-product-form');
+                form.reset()  
                 }
             }
         }
@@ -131,8 +140,8 @@ const RegisterProduct = (props) => {
                                 </Form.Group>
                                 <Form.Group controlId="aisle-name">
                                     <Form.Label>Aisle Name</Form.Label>
-                                    <Form.Select onChange={e => setAisleName(e.target.value)} aria-label="Default select example" required>
-                                        <option>{props.editThisProduct.aisleName}</option>
+                                    <Form.Select onChange={e => setAisleName(e.target.value)} aria-label="Default" required>
+                                        <option >Open this select menu</option>
                                         <option value="Food">Food</option>
                                         <option value="Drink">Drink</option>
                                         <option value="Misc">Misc</option>

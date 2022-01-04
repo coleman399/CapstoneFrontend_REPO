@@ -124,7 +124,7 @@ const CustomerPage = (props) => {
                         alt="Second slide"
                     />
                     <Carousel.Caption className="border rounded-pill">
-                        <h2 className="carousel-header-two">Here Only For You and Your Family</h2>
+                        <h2 className="carousel-header-two">Only For You and Your Family</h2>
                     </Carousel.Caption>
                 </Carousel.Item>
                 <Carousel.Item>
@@ -144,41 +144,50 @@ const CustomerPage = (props) => {
                 <br/>
                 <div className="border rounded">
                 <Navbar className="navbar-shop-nav border rounded">
-                    <Container>
-                        <div className="col align-self-start">
-                              <InputGroup>
-                                <FormControl
-                                    placeholder="Search"
-                                    aria-label="Search"
-                                    aria-describedby="basic-addon2"
-                                    type="text"
-                                    onChange={event => {setSearchTerm(event.target.value)}}
-                                />
-                            </InputGroup>
-                        </div>
-                        <div className="col"/>
-                            <div className="text-center">
-                                <Stack direction="horizontal" gap={3}>
+                    <Container >
+                        <Container>
+                            <Stack direction="horizontal" gap={3}>
+                                <Col xs={6}>
+                                <InputGroup>
+                                    <FormControl
+                                        placeholder="Search"
+                                        aria-label="Search"
+                                        aria-describedby="basic-addon2"
+                                        type="text"
+                                        onChange={event => {setSearchTerm(event.target.value)}}
+                                        />
+                                        </InputGroup>
+                                </Col>
+                                <div className="vr"/>
+                                <Col>
                                     <Button onClick={()=>setAisleToFood()}>Food Aisle</Button>
-                                    <div className="vr"/>
+                                </Col>
+                                <div className="vr"/>
+                                <Col>
                                     <Button onClick={()=>setAisleToDrink()}>Drink Aisle</Button>
-                                    <div className="vr"/>
+                                </Col>
+                                <div className="vr"/>
+                                <Col>
                                     <Button onClick={()=>setAisleToMisc()}>Misc Aisle</Button>
-                                    <div className="vr"/>
-                                    <Button onClick={()=>setAisleToAll()}>All</Button>
-                                </Stack>
-                            </div>
-                        <div className="col">
-                            <div className="shopping-cart-button">
-                                <button type="button" onClick={()=>goToShoppingCartPage()}className="btn btn-primary position-relative">
+                                </Col>
+                                <div className="vr"/>
+                                <Col>
+                                    <Button onClick={()=>setAisleToAll()}>All Aisles</Button>
+                                </Col>
+                                <div className="vr"/>
+                                <Col>
+                                <div className="shopping-cart-button">
+                                    <button type="button" onClick={()=>goToShoppingCartPage()}className="btn btn-primary position-relative">
                                     Shopping Cart 🛒
                                     <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                         {props.counter}
                                         <span className="visually-hidden">Items in Cart</span>
                                     </span>
-                                </button>
-                            </div>
-                        </div>
+                                    </button>
+                                </div>
+                                </Col>
+                            </Stack>
+                        </Container>                            
                     </Container>
                 </Navbar>
                 <Container className="shop-container-content" fluid>

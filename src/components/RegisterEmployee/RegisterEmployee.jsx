@@ -24,8 +24,9 @@ const RegisterEmployee = (props) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setUpdate(props.editEmployee)
     const jwt = localStorage.getItem('token');
-    if (update === false) {
+    if (props.editEmployee === false) {
       try {
         let cost = parseFloat(props.budget.total_expenses) + parseFloat(tempUser.salary);
         let total_cost = (cost).toFixed(2);
@@ -137,7 +138,8 @@ const RegisterEmployee = (props) => {
         })
         alert("🎉 Employee Updated! 🎉") 
         let form = document.getElementById('register-employee-form');
-        form.reset()  
+        form.reset()
+        props.renderToggle();  
       } catch (e) {
         if (e.response.status === 401) {
           alert("Unauthorized access. Please try again.")
@@ -189,7 +191,7 @@ const RegisterEmployee = (props) => {
                         <Form.Control onChange={e => setLastName(e.target.value)} placeholder={props.editThisEmployee.last_name} type="text" required />
                     </Form.Group>
                     <Form.Group controlId="salary">
-                      <Form.Label>Salary</Form.Label>
+                      <Form.Label>Salary Yearly</Form.Label>
                         <Form.Control onChange={e => setSalary(e.target.value)} placeholder={props.editThisEmployee.salary}type="text" required />
                     </Form.Group>
                     <Form.Group controlId="isAdmin">
@@ -234,7 +236,7 @@ const RegisterEmployee = (props) => {
                         <Form.Control onChange={e => setLastName(e.target.value)} type="text" required />
                     </Form.Group>
                     <Form.Group controlId="salary">
-                      <Form.Label>Salary</Form.Label>
+                      <Form.Label>Salary Yearly</Form.Label>
                         <Form.Control onChange={e => setSalary(e.target.value)} type="text" required />
                     </Form.Group>
                     <Form.Group controlId="isAdmin">
